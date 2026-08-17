@@ -470,6 +470,24 @@ Source: [`packages/hooks/hook-protocol/src/types.ts:19`](../packages/hooks/hook-
 
 Source: [`packages/hooks/hook-protocol/src/types.ts:31`](../packages/hooks/hook-protocol/src/types.ts)
 
+### `jspace/*`
+
+<a id="jspacestate--log-only"></a>
+
+#### `jspace/state` — log-only
+
+```ts persistence-catalog
+/**
+ * Complete post-mutation J-Space ledger, or a clear tombstone. The event
+ * is log-only (never on the model-visible surface); when the loop's
+ * runtime-context projection re-renders the ledger as a durable user
+ * message, that message carries the system-prompt plugin source.
+ */
+'jspace/state': JSpaceStateChangeMeta
+```
+
+Source: [`packages/context/jspace/src/domain.ts:43`](../packages/context/jspace/src/domain.ts)
+
 ### `llm/*`
 
 <a id="llmretry--log-only"></a>

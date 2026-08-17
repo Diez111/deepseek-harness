@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-08-17T20:31:19.768Z",
+  "arms": [
+    {
+      "label": "A: harness baseline",
+      "inputTokens": 60,
+      "outputTokens": 264,
+      "estimatedInputTokens": 168,
+      "toolCalls": 5,
+      "repeatedToolCalls": 3,
+      "failedAttempts": 3,
+      "wallTimeMs": 24.3,
+      "taskComplete": true,
+      "verificationGateUsed": false,
+      "ledgerWrites": 0
+    },
+    {
+      "label": "B: harness + jspace",
+      "inputTokens": 70,
+      "outputTokens": 629,
+      "estimatedInputTokens": 1681,
+      "toolCalls": 6,
+      "repeatedToolCalls": 1,
+      "failedAttempts": 2,
+      "wallTimeMs": 18.9,
+      "taskComplete": true,
+      "verificationGateUsed": true,
+      "ledgerWrites": 3
+    }
+  ]
+}
