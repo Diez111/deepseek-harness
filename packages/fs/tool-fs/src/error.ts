@@ -26,6 +26,30 @@ const REMEDIES: Partial<Record<FsErrorCode, string>> = {
  * @param error - the caught value from a write/edit execution.
  * @returns a remediated `FsError` for the two guarded-mutation codes, else the original value.
  */
+/**
+ * Append a bounded preview of the current file content to an
+ * `FS_EDIT_NOT_FOUND` failure observed AFTER a fresh read. A stale or
+ * hallucinated `old_string` otherwise loops: the model re-guesses the same
+ * string without seeing what the file actually contains. Bounded to 160
+ * chars and never changes the error code, so routing/retry layers keep
+ * working.
+ * @param error - the caught edit failure (a remediable FsError or not).
+ * @param freshText - current file content read just before the failed retry,
+ *   or undefined when no fresh read happened.
+ * @returns an enriched `FS_EDIT_NOT_FOUND` FsError, else the original value.
+ */
+export function enrichEditNotFound(error: unknown, freshText: string | undefined): unknown {
+  if (error instanceof FsError && error.code === 'FS_EDIT_NOT_FOUND' && freshText !== undefined) {
+    const preview = (freshText.trimStart().slice(0, 160) || ' (empty file)')
+    return new FsError(
+      `${error.message} — current content starts with: ${JSON.stringify(preview)}`,
+      error.code,
+      { cause: error },
+    )
+  }
+  return error
+}
+
 export function remediateFsError(error: unknown): unknown {
   if (!(error instanceof FsError)) return error
   const remedy = REMEDIES[error.code]

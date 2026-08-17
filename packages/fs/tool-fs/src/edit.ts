@@ -12,7 +12,7 @@ import { FsError } from '@deepseek-ai/dsh-fs'
 import type {} from '@deepseek-ai/dsh-fs'
 import type {} from '@deepseek-ai/dsh-system-prompt'
 import { computeHunkDiffs, diffsFromMeta } from './diff.ts'
-import { remediateFsError } from './error.ts'
+import { enrichEditNotFound, remediateFsError } from './error.ts'
 import { sessionResolveOptions } from './session-cwd.ts'
 import type { FsSandboxController } from './sandbox.ts'
 
@@ -123,6 +123,9 @@ export function applyEditTool(ctx: Context, sandbox: FsSandboxController): void 
       // inside the try: both that refusal and the provider's guarded-mutation
       // failure get the model-facing remedy below.
       let outcome
+      // Current content read during a guarded-mutation recovery, used to enrich
+      // a stale old_string diagnostic so the model can re-anchor instead of loop.
+      let freshText: string | undefined
       try {
         const intent = await ctx.waterfall('fs/edit-intent', target, exec, () => undefined)
         outcome = await ctx.fs.editText(
@@ -142,7 +145,7 @@ export function applyEditTool(ctx: Context, sandbox: FsSandboxController): void 
           try {
             const info = await ctx.fs.stat(target, exec.signal)
             if (info !== undefined) {
-              await ctx.fs.readText(target, exec.signal)
+              freshText = await ctx.fs.readText(target, exec.signal)
               ctx.emit('fs/observed', target, { kind: 'present', version: info.version }, exec)
               const intent2 = await ctx.waterfall('fs/edit-intent', target, exec, () => undefined)
               outcome = await ctx.fs.editText(
@@ -159,7 +162,7 @@ export function applyEditTool(ctx: Context, sandbox: FsSandboxController): void 
             }
           } catch (retryError: unknown) {
             const retryMapped = sandbox.mapError(retryError, sandboxPolicy)
-            if (retryMapped instanceof FsError) throw remediateFsError(retryMapped)
+            if (retryMapped instanceof FsError) throw remediateFsError(enrichEditNotFound(retryMapped, freshText))
             throw remediateFsError(mapped)
           }
         } else {

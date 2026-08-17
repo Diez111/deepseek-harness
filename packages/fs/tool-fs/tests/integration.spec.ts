@@ -176,6 +176,9 @@ describe('default deployment (with dsh-fs-observation-policy)', () => {
       // The fresh read satisfies the CAS gate; the literal match now decides.
       expect(result.error).toMatchObject({ info: { code: 'FS_EDIT_NOT_FOUND' } })
       expect(text(result)).toContain('old_string was not found')
+      // The diagnostic carries a bounded preview of the current content so a
+      // stale old_string does not loop: the model can re-anchor on reality.
+      expect(text(result)).toContain('current content starts with')
       expect(await readFile(join(dir, 'a.txt'), 'utf8')).toBe('goodbye')
     })
 
