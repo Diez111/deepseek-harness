@@ -8,6 +8,7 @@
 import type { Context } from '@deepseek-ai/cordis'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { DiffCallView, DiffResultView, ToolResult } from '@deepseek-ai/dsh-tools'
+import { FsError } from '@deepseek-ai/dsh-fs'
 import type {} from '@deepseek-ai/dsh-fs'
 import type {} from '@deepseek-ai/dsh-system-prompt'
 import { computeHunkDiffs, diffsFromMeta } from './diff.ts'
@@ -132,10 +133,41 @@ export function applyEditTool(ctx: Context, sandbox: FsSandboxController): void 
           sandboxPolicy,
         )
       } catch (error: unknown) {
-        // A sandbox denial becomes the shared [sandbox: …] marker (the model
-        // recognizes it from bash); stale/not-observed failures gain their
-        // model-facing remedy; anything else passes through.
-        throw remediateFsError(sandbox.mapError(error, sandboxPolicy))
+        const mapped = sandbox.mapError(error, sandboxPolicy)
+        if (mapped instanceof FsError && (mapped.code === 'FS_NOT_OBSERVED' || mapped.code === 'FS_STALE_VERSION')) {
+          // Deterministic recovery for guarded-mutation failures: read the file
+          // now, record the observation, and retry the edit exactly once. A
+          // further failure is remediated below (re-read/retry), so a stale or
+          // non-unique edit is never applied blindly.
+          try {
+            const info = await ctx.fs.stat(target, exec.signal)
+            if (info !== undefined) {
+              await ctx.fs.readText(target, exec.signal)
+              ctx.emit('fs/observed', target, { kind: 'present', version: info.version }, exec)
+              const intent2 = await ctx.waterfall('fs/edit-intent', target, exec, () => undefined)
+              outcome = await ctx.fs.editText(
+                target,
+                { oldString: input.oldString, newString: input.newString, replaceAll: input.replaceAll },
+                intent2,
+                exec.signal,
+                sandboxPolicy,
+              )
+            } else {
+              // Target is absent: there is nothing to re-read. Preserve the
+              // original guarded-mutation failure (stale/removed).
+              throw mapped
+            }
+          } catch (retryError: unknown) {
+            const retryMapped = sandbox.mapError(retryError, sandboxPolicy)
+            if (retryMapped instanceof FsError) throw remediateFsError(retryMapped)
+            throw remediateFsError(mapped)
+          }
+        } else {
+          // A sandbox denial becomes the shared [sandbox: …] marker (the model
+          // recognizes it from bash); stale/not-observed failures gain their
+          // model-facing remedy; anything else passes through.
+          throw remediateFsError(mapped)
+        }
       }
       // Record the present observation (a no-op when no policy plugin listens).
       ctx.emit('fs/observed', target, { kind: 'present', version: outcome.version }, exec)

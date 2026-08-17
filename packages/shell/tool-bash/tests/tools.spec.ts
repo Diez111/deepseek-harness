@@ -328,7 +328,6 @@ describe('bash tool', () => {
   it.each([
     [{}, /missing required property "command"/],
     [{ command: 42, description: 'd' }, /"command" must be a string/],
-    [{ command: 'x' }, /missing required property "description"/],
     [{ command: 'x', description: 7 }, /"description" must be a string/],
     [{ command: 'x', description: 'd', timeoutMs: 'soon' }, /"timeoutMs" must be a number/],
     [{ command: 'x', description: 'd', workdir: 7 }, /"workdir" must be a string/],
@@ -343,7 +342,6 @@ describe('bash tool', () => {
   // Value constraints the ParameterSchemaSpec can't express stay in the tool body.
   it.each([
     [{ command: '  ', description: 'd' }, /invalid command/],
-    [{ command: 'x', description: '   ' }, /invalid description/],
     [{ command: 'x', description: 'd', timeoutMs: -1 }, /invalid timeoutMs/],
   ])('rejects value-invalid args %j', async (args, pattern) => {
     const ctx = await setup()
@@ -368,7 +366,7 @@ describe('bash tool', () => {
     const bashSchema = schemas[0]!
     expect(bashSchema.parameters).toMatchObject({
       type: 'object',
-      required: ['command', 'description'],
+      required: ['command'],
     })
     expect(Object.keys(bashSchema.parameters.properties as Record<string, unknown>))
       .toContain('run_in_background')
@@ -1042,11 +1040,12 @@ describe('tool-owned UI presentation (presentCall / presentResult)', () => {
     })).toBeUndefined()
   })
 
-  it('presentCall validates softly: malformed args (missing required description) return undefined, never throw', async () => {
+  it('presentCall falls back deterministically when description is omitted (no throw)', async () => {
     const ctx = await setup()
-    // `defineTool` soft-validates replayed logged args before presentation. Invalid shapes return
-    // undefined for generic UI rendering rather than throwing; `presentCall` accepts `unknown`.
-    expect(ctx.tools.get('bash')?.presentCall?.({ command: 'ls' })).toBeUndefined()
+    // Missing `description` is mechanical (a UI display field), so presentation
+    // derives a label from the command instead of returning undefined.
+    const view = ctx.tools.get('bash')?.presentCall?.({ command: 'ls' })
+    expect(view).toMatchObject({ card: 'terminal', description: 'bash: ls' })
   })
 })
 

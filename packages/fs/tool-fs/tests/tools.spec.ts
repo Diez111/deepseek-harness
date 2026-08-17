@@ -461,12 +461,12 @@ describe('edit tool', () => {
     expect(text(result)).toContain('file_path must be a non-empty string')
   })
 
-  it('propagates FS_NOT_OBSERVED when the file was never read (the gate decides)', async () => {
+  it('recovers FS_NOT_OBSERVED with a fresh read when the file exists (the gate satisfied by the tool)', async () => {
     const { ctx, fs } = await setup()
-    fs.files.set('key:a.txt', 'hello')
+    fs.files.set('key:a.txt', 'cat')
     const result = await call(ctx, 'edit', { file_path: 'a.txt', old_string: 'a', new_string: 'b' }, { session: { header: {} } })
-    expect(result.isError).toBe(true)
-    expect(result.error).toMatchObject({ info: { code: 'FS_NOT_OBSERVED' } })
+    expect(result.isError).toBe(false)
+    expect(fs.files.get('key:a.txt')).toBe('cbt')
   })
 })
 
