@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/context/jspace/README.md
-README.md: 5f1908a1cb8e234388c4bbae06dd4817662b8177
-README.zh.md: 7af024c011379388cf85ca7c6984d55ee44a5016
+README.md: 6e2b10d63205e26db97d381733840e24c2e3bf03
+README.zh.md: f71f8eed41b072528a3df820ed31b19a7c5b66c2

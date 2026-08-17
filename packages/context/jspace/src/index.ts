@@ -39,6 +39,13 @@ export const inject = ['systemPrompt', 'tools'] as const
 export interface Config {
   /** Master switch. When false (default) the plugin registers nothing. */
   enabled?: boolean
+  /**
+   * Inject a short guidance section telling the model to keep the ledger for
+   * multi-step tasks and to pass jspace_finish before declaring completion.
+   * Off it stays fully opt-in (the model reads the tool descriptions only).
+   * Defaults to true when enabled.
+   */
+  autoGuide?: boolean
   /** Tier: explicit fast/full/loop, or auto-resolution from the ledger (default). */
   mode?: JSpaceModeChoice
   /** Cap on every bounded ledger list (core/verified/open), default 12. */
@@ -68,6 +75,7 @@ export interface Config {
 /** Schemastery config for the controller. */
 export const Config: z<Config> = z.object({
   enabled: z.boolean().default(false),
+  autoGuide: z.boolean().default(true),
   mode: z.union(['auto', 'fast', 'full', 'loop'] as const).default('auto'),
   maxItems: z.number().step(1).min(1).default(12),
   maxItemChars: z.number().step(1).min(1).default(200),
@@ -85,6 +93,7 @@ export const Config: z<Config> = z.object({
 /** Fully materialized controller policy. */
 interface ResolvedConfig {
   readonly enabled: boolean
+  readonly autoGuide: boolean
   readonly mode: JSpaceModeChoice
   readonly maxItems: number
   readonly maxItemChars: number
@@ -115,6 +124,7 @@ function resolveConfig(config: Config): ResolvedConfig {
   }
   return {
     enabled: config.enabled ?? false,
+    autoGuide: config.autoGuide ?? true,
     mode: config.mode ?? 'auto',
     maxItems,
     maxItemChars: positiveInt(config.maxItemChars, 200, 'maxItemChars'),
@@ -357,6 +367,14 @@ export function applyPatch(previous: JSpaceState | null, patch: LedgerPatch, cfg
     updatedAt: now,
   }
 }
+
+/** Short proactive-use guidance the model sees when autoGuide is on. */
+const AUTO_GUIDE = 'Maintain the J-Space task ledger (jspace_state) for any task '
+  + 'with several steps: record GOAL, CORE constraints, VERIFIED evidence, OPEN '
+  + 'problems, and NEXT action, keeping it compact. Before declaring a task '
+  + 'complete, call jspace_finish; it rejects the claim until every OPEN item is '
+  + 'resolved or documented and the closure acknowledgements are given. Do not '
+  + 'use these tools for trivial single-step work.'
 
 /** Advisory source label stamped on every injected note. */
 const PLUGIN_SOURCE = { kind: 'plugin' as const, plugin: 'jspace' }
@@ -634,6 +652,11 @@ function withContext(ctx: Context, cfg: ResolvedConfig): void {
 export function apply(ctx: Context, config: Config): void {
   const cfg = resolveConfig(config)
   if (!cfg.enabled) return
+  if (cfg.autoGuide) {
+    // Small, deployment-gated guidance so the model self-starts the ledger on
+    // multi-step work; off keeps the tools opt-in (descriptions only).
+    ctx.systemPrompt.section({ name: 'jspace-guide', order: 20, text: AUTO_GUIDE })
+  }
   withTools(ctx, cfg)
   withContext(ctx, cfg)
   withAttemptGuard(ctx, cfg)

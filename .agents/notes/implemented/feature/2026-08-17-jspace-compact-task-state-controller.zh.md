@@ -10,7 +10,7 @@
 
 ## 决策
 
-一个可选包 `@deepseek-ai/dsh-jspace`（位于 `packages/context`），由 `config.enabled`（默认 false）门控。禁用时不注册任何东西，Harness 行为与之前完全一致；启用时新增三个协调机制，且不加任何系统提示区段：
+一个可选包 `@deepseek-ai/dsh-jspace`（位于 `packages/context`），由 `config.enabled`（默认 false）门控。禁用时不注册任何东西，Harness 行为与之前完全一致；启用时新增三个协调机制。一段简短的系统提示区段（`jspace-guide`，`autoGuide`，默认开启）会主动告诉模型在多步任务中维护账本、并在声明完成前调用 `jspace_finish`；`autoGuide: false` 可移除它，使工具完全 opt-in。人格与首轮接口永不被改动：
 
 1. **持久账本 + 运行时上下文注入。** 账本通过新的只写会话事件 `jspace/state`（携带完整的变更后快照，last-write-wins，与 `todo/write`、`goal/change` 一致）事件溯源。模型可见块注册为 `systemPrompt.context`（`jspace`，order 300）：loop 的 runtime-context 投影只在块变化或压实后重新落盘，因此恢复复用现有机制而非新开一条上下文恢复路径。块在首次写入前或 `fast` 档不渲染任何内容，所以记账开始前 token 成本为零，并由 `maxStateBytes` 约束。
 2. **失败感知的重试守卫。** 每 agent 的内存失败调用记忆（参数规范化），挂接 `tools/post-execute` 与 `agent/pre-step`（与 repeat-tool 守卫一致），当之前失败过的同一规范化调用被重试时注入提示；成功会遗忘该记录。它与 `repeat-tool-reminder` 互补（后者不看结果计数相同调用，也不记录失败原因）。

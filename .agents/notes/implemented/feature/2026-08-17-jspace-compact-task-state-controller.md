@@ -23,7 +23,11 @@ is sensitive to.
 One opt-in package, `@deepseek-ai/dsh-jspace` under `packages/context`, gated by
 `config.enabled` (default false). When disabled it registers nothing and the
 harness behaves exactly as before; when enabled it adds three coordinated
-mechanisms and no system-prompt section:
+mechanisms. A short system-prompt section (`jspace-guide`, `autoGuide`, default
+on) proactively tells the model to keep the ledger for multi-step tasks and to
+pass `jspace_finish` before declaring completion; `autoGuide: false` removes it
+so the tools stay fully opt-in. The persona and first-round interface are never
+touched:
 
 1. **Durable ledger + runtime-context injection.** The ledger is event-sourced
    through a new log-only session event `jspace/state` carrying the complete

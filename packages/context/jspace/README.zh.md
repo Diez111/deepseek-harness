@@ -18,6 +18,7 @@
   name: '@deepseek-ai/dsh-jspace'
   config:
     enabled: true        # default false — the feature flag
+    autoGuide: true      # short guidance so the model self-starts the ledger
     mode: auto           # auto | fast | full | loop
     maxItems: 12         # cap on core/verified/open lists
     maxItemChars: 200
@@ -45,11 +46,11 @@
 
 #### 模型看到什么
 
-不添加任何系统提示区段，Harness 的身份与人格保持不变。唯一新增的模型可见面是两个工具 schema 与动态状态块（见下）。这使得首轮接口与人格与部署配置完全一致——即 J-Space 报告所称的「首轮锚定」接口得以保留。
+Harness 的身份与人格保持不变。当 `autoGuide` 开启（启用时的默认）时，一个简短的引导区段（`jspace-guide`）会告诉模型：在需多步的任务中维护账本，并在声明完成前调用 `jspace_finish`；设置 `autoGuide: false` 可移除它，工具将完全 opt-in（模型只读它们的描述）。其余模型可见面是两个工具 schema 与动态状态块（见下）。这使得首轮接口与人格与部署配置完全一致——即 J-Space 报告所称的「首轮锚定」接口得以保留。
 
 #### Token 影响
 
-`enabled` 为 false 或尚无账本时零 token。启用后，两个工具 schema 在工具可见期间带来固定的每请求成本；状态块自首次账本写入起才产生 token（受 `maxStateBytes` 约束）。
+`enabled` 为 false 时零 token。启用后，`jspace-guide` 区段在开启期间带来少量固定的每请求成本，两个工具 schema 在工具可见期间带来固定的每请求成本；状态块自首次账本写入起才产生 token（受 `maxStateBytes` 约束）。
 
 #### KV 缓存影响
 

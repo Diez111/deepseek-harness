@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-08-17-jspace-compact-task-state-controller.md
-2026-08-17-jspace-compact-task-state-controller.md: 2dbc7713e7557f3465fd71bb032b33b7109d95e4
-2026-08-17-jspace-compact-task-state-controller.zh.md: bde13d709950f1eb220972252f20136377aea4ff
+2026-08-17-jspace-compact-task-state-controller.md: af08b36b1e79d43bc74a43bb7e2a0d06d4a3a480
+2026-08-17-jspace-compact-task-state-controller.zh.md: 6e7413225d20bbac9aa441eb316a18c957555188

@@ -198,4 +198,31 @@ describe('jspace feature flag through a real Loader composition', () => {
   it('fails loading when configuration is invalid (maxItems 0)', async () => {
     await expect(boot(['    enabled: true', '    maxItems: 0'])).rejects.toThrow(/maxItems/)
   }, 30_000)
+
+  it('autoGuide defaults on: injects a small proactive-use guidance section', async () => {
+    const ctx = await boot(['    enabled: true', '    mode: loop'])
+    const owner = agent(ctx)
+    const assembly = await ctx.systemPrompt.assemble({ agent: owner, scope: owner })
+    const guide = assembly.sections.find(entry => entry.name === 'jspace-guide')?.text ?? ''
+    expect(guide).toContain('jspace_state')
+    expect(guide).toContain('jspace_finish')
+    expect(guide.length).toBeLessThan(500)
+  }, 30_000)
+
+  it('autoGuide: false keeps the tools opt-in (no guidance section)', async () => {
+    const ctx = await boot(['    enabled: true', '    mode: loop', '    autoGuide: false'])
+    const owner = agent(ctx)
+    const assembly = await ctx.systemPrompt.assemble({ agent: owner, scope: owner })
+    expect(assembly.sections.some(entry => entry.name === 'jspace-guide')).toBe(false)
+    // the tools remain available
+    const names = ctx.tools.schemas().map(schema => schema.name)
+    expect(names).toContain('jspace_state')
+  }, 30_000)
+
+  it('disabled: no guidance section either', async () => {
+    const ctx = await boot([])
+    const owner = agent(ctx)
+    const assembly = await ctx.systemPrompt.assemble({ agent: owner, scope: owner })
+    expect(assembly.sections.some(entry => entry.name === 'jspace-guide')).toBe(false)
+  }, 30_000)
 })

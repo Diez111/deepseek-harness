@@ -39,6 +39,7 @@ reimplementing it.
   name: '@deepseek-ai/dsh-jspace'
   config:
     enabled: true        # default false — the feature flag
+    autoGuide: true      # short guidance so the model self-starts the ledger
     mode: auto           # auto | fast | full | loop
     maxItems: 12         # cap on core/verified/open lists
     maxItemChars: 200
@@ -72,18 +73,22 @@ non-positive or non-integer budget, ...).
 
 #### What the model sees
 
-No system-prompt section is added and the harness identity/persona is untouched.
-The only model-facing surface is the two tool schemas plus the dynamic state
-block (below). This keeps the first-round interface and persona exactly as the
+The harness identity/persona is untouched. When `autoGuide` is on (the default
+when enabled) one short guidance section (`jspace-guide`) tells the model to
+keep the ledger for multi-step tasks and to pass `jspace_finish` before
+declaring completion; setting `autoGuide: false` removes it and the tools become
+fully opt-in (the model reads only their descriptions). The rest of the
+model-facing surface is the two tool schemas plus the dynamic state block
+(below). This keeps the first-round interface and persona exactly as the
 deployment configured them — the interface the J-Space report calls
 "first-round anchored" is preserved.
 
 #### Token effect
 
-Zero tokens while `enabled` is false or when no ledger exists. When enabled,
-the two tool schemas add a fixed per-request cost while the tools are visible,
-and the state block adds tokens only from the first ledger write onward (bounded
-by `maxStateBytes`).
+Zero tokens while `enabled` is false. When enabled, the `jspace-guide` section
+adds a small fixed per-request cost while it is on, the two tool schemas add a
+fixed per-request cost while the tools are visible, and the state block adds
+tokens only from the first ledger write onward (bounded by `maxStateBytes`).
 
 #### KV Cache effect
 
