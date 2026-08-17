@@ -1675,7 +1675,7 @@ describe('the run_code dispatch bridge', () => {
     // The name IS declared to this model, so a bare `unknown tool` reads as a
     // broken deployment. The denial carries the route instead.
     expect(result.error?.message).toBe(
-      `unknown tool "write": \`write\` is available: in code mode call it from inside a \`${RUN_CODE_NAME}\` program as \`await tools.write(...)\` — a direct call naming any other tool fails`,
+      `unknown tool "write": \`write\` is available: in code mode call it inside a \`${RUN_CODE_NAME}\` program as \`await tools.write(...)\` — do not call \`write\` directly`,
     )
   })
 

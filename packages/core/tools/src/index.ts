@@ -1438,7 +1438,7 @@ export class ToolRuntime extends Service {
           exec: execution,
           result: toolErrorResult(new ToolNotFoundError(
             name,
-            `\`${name}\` is available: in code mode call it from inside a \`${RUN_CODE_NAME}\` program as \`await tools.${name}(...)\` — a direct call naming any other tool fails`,
+            `\`${name}\` is available: in code mode call it inside a \`${RUN_CODE_NAME}\` program as \`await tools.${name}(...)\` — do not call \`${name}\` directly`,
           )),
         }
       }
