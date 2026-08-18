@@ -23,7 +23,7 @@ declare module '@deepseek-ai/dsh-session/types' {
   }
 }
 
-export type EvidenceStatus = 'fresh' | 'stale' | 'invalid'
+export type EvidenceStatus = 'fresh' | 'stale'
 export type EvidenceOp =
   | { op: 'store'; entry: EvidenceEntry }
   | { op: 'markStale'; files: readonly string[] }
@@ -174,7 +174,7 @@ export function apply(ctx: Context, config: Config): void {
   ctx.tools.register(defineTool({
     name: 'evidence_list',
     description: 'List stored evidence compactly (id, type, status, source, size) without content.',
-    parameters: { status: { type: 'string', description: 'filter: fresh | stale | invalid' } },
+    parameters: { status: { type: 'string', description: 'filter: fresh | stale' } },
     output: { schema: { type: 'object', additionalProperties: false, properties: {
       total: { type: 'number' }, items: { type: 'array', items: { type: 'string' } } } }, render: (_a, v) => [{ type: 'text', text: JSON.stringify(v) }] },
     async execute(args, exec) {
