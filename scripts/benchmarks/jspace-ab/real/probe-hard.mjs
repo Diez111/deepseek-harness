@@ -48,7 +48,7 @@ const run = spawnSync('/home/diez/.nvm/versions/node/v24.16.0/bin/dsh', ['--prof
   + 'asserts pass and it prints HARD_OK=<number>. Reply with the program\'s exact output.'], { cwd: wd, timeout: 300_000, encoding: 'utf8' })
 const ms = Math.round(performance.now() - t0)
 const out = (run.stdout ?? '') + (run.stderr ?? '')
-const ok = /HARD_OK=1?3/.test(out)
+const ok = /HARD_OK=13/.test(out)
 console.log(JSON.stringify({ probe: 'hard-eval', ok, ms, rc: run.status }))
 console.log('  marker:', (out.match(/HARD_OK=\d+/) || ['NO_MARKER'])[0], '| assert_err:', /AssertionError/.test(out))
 console.log('  tail:', out.split('\n').filter(Boolean).slice(-3).join(' | ').slice(0, 220))

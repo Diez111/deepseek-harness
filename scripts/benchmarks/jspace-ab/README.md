@@ -55,7 +55,16 @@ repeat per episode. The reported `input_tokens` column uses the mock adapter's
 constant usage and is only a placeholder; use `estimated_input_tokens` (or a
 real provider's usage) for comparisons.
 
-## Real-model run (future work)
+## Real-model run
+
+The `real/` directory holds an optional real-model A/B harness (flash@high vs flash@max)
+- `run-arm.mjs` runs one arm with a real model and records wall-time + a success marker
+- `run-ab.sh` runs both arms and prints the comparison
+- `set-effort.mjs` flips `agent-default-model.reasoningEffort` in `~/.dsh/settings.yaml` (safe: fails loudly if the key is absent; honors `$DSH_HOME`)
+- `probe-hard.mjs` runs the hard expression-evaluator probe headlessly and checks the exact `HARD_OK=<number>` marker
+- `tasks.json` holds the probe prompts
+
+These scripts are machine-local helpers (paths/credentials come from the environment) and are not part of the CI surface.
 
 To compare actual model behavior, run the same two compositions through the
 headless profile with a real provider:

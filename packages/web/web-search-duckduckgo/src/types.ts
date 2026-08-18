@@ -18,5 +18,4 @@ export interface DdgInstantResponse {
   readonly AbstractText?: string
   readonly AbstractURL?: string
   readonly RelatedTopics?: readonly DdgRelatedTopic[]
-  readonly Results?: readonly DdgRelatedTopic[]
 }

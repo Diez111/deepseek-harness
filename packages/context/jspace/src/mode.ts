@@ -18,15 +18,6 @@ export function autoModeEmpty(): JSpaceMode {
 }
 
 /**
- * Automatic tier for a non-empty ledger.
- * @param state - the current ledger.
- * @returns `loop` when a goal or open problems exist, else `full`.
- */
-export function autoModeForState(state: JSpaceState): JSpaceMode {
-  return state.goal !== undefined || state.open.length > 0 ? 'loop' : 'full'
-}
-
-/**
  * Resolve the deployment choice against the current ledger.
  * @param choice - configured `mode` (`'auto'` is the default).
  * @param state - current ledger, `null` when none was written.

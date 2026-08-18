@@ -1,10 +1,13 @@
 /**
  * `@deepseek-ai/dsh-evo-evidence`: Evidence Vault for the DSH-EVO program.
  * External-to-context store of exact evidence (command outputs, errors,
- * diffs) with per-entry metadata, file-hash invalidation and selective
- * retrieval tools. Persisted as durable session events (no second storage).
- * Feature-flagged: enabled defaults to false, so an unconfigured row equals
- * the baseline exactly.
+ * diffs) with per-entry metadata and selective retrieval tools. Content is
+ * capped at a UTF-8 byte budget. Each vault operation is appended as a
+ * durable session event (log-only); the in-memory per-session vault is not
+ * rehydrated from those events across processes, so evidence is best-effort
+ * within a single run. A content hash is recorded per entry (reserved for
+ * future invalidation; not yet used). Feature-flagged: enabled defaults to
+ * false, so an unconfigured row equals the baseline exactly.
  * @module @deepseek-ai/dsh-evo-evidence
  */
 
@@ -61,13 +64,23 @@ export function applyEvidenceOp(state: EvidenceVaultState, op: EvidenceOp): Evid
   return { seq: state.seq + 1, entries: [...state.entries, op.entry] }
 }
 
+/** Truncate `text` to at most `maxBytes` UTF-8 bytes without splitting a code point. */
+function truncateUtf8Bytes(text: string, maxBytes: number): string {
+  const buf = Buffer.from(text, 'utf8')
+  if (buf.length <= maxBytes) return text
+  let end = maxBytes
+  // Step back while the byte at `end` is a UTF-8 continuation byte (0b10xxxxxx).
+  while (end > 0 && (buf[end] & 0xc0) === 0x80) end -= 1
+  return buf.subarray(0, end).toString('utf8')
+}
+
 /** Build a new entry enforcing the content byte cap. */
 export function makeEntry(
   state: EvidenceVaultState,
   input: { type: string; source: string; command?: string; files?: readonly string[]; content: string },
   maxBytes: number,
 ): EvidenceEntry {
-  const content = input.content.slice(0, maxBytes)
+  const content = truncateUtf8Bytes(input.content, maxBytes)
   return {
     id: 'E' + String(state.seq), type: input.type, source: input.source,
     ...input.command !== undefined ? { command: input.command } : {},

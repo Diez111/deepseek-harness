@@ -144,7 +144,7 @@ export function extractDdgHtmlSources(html: string): WebSearchSource[] {
   let index = 0
   while ((titleMatch = titleRe.exec(html)) !== null && sources.length < 100) {
     const href = decodeDdgUrl(titleMatch[1] ?? '')
-    if (href.length === 0 || seen.has(href)) { index += 1; continue }
+    if (href.length === 0 || seen.has(href)) { continue }
     seen.add(href)
     sources.push({
       url: href,
@@ -284,8 +284,7 @@ export class DuckDuckGoSearchProvider implements WebSearchProvider {
     }
     let body: string
     try {
-      const buffer = await response.arrayBuffer()
-      body = new TextDecoder('utf-8').decode(buffer.slice(0, this.options.maxHtmlBytes))
+      body = await readCappedBody(response, this.options.maxHtmlBytes)
     } catch (error) {
       throw new WebError(`duckduckgo html search read failed: ${fault(error)}`, 'WEB_PROVIDER_ERROR')
     }
@@ -296,6 +295,44 @@ export class DuckDuckGoSearchProvider implements WebSearchProvider {
 /** RequestInit signal wiring that is valid under exactOptionalPropertyTypes. */
 function signalInit(signal: AbortSignal | undefined): { signal: AbortSignal } | Record<string, never> {
   return signal !== undefined ? { signal } : {}
+}
+
+/**
+ * Read at most `maxBytes` bytes of a response body, canceling the upstream
+ * read once the cap is reached (a runaway body is never buffered whole).
+ * @param response - the fetched response.
+ * @param maxBytes - hard cap on bytes read, per the provider's HTML bound.
+ * @returns the decoded prefix as a UTF-8 string (a trailing cut code point
+ *   decodes to a replacement character, never to an unbounded read).
+ */
+async function readCappedBody(response: Response, maxBytes: number): Promise<string> {
+  const stream = response.body
+  if (stream === null) {
+    const buffer = await response.arrayBuffer()
+    return new TextDecoder('utf-8').decode(buffer.slice(0, maxBytes))
+  }
+  const reader = stream.getReader()
+  const chunks: Uint8Array[] = []
+  let received = 0
+  try {
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      if (received >= maxBytes) {
+        void reader.cancel().catch(() => {})
+        break
+      }
+      const take = value.subarray(0, maxBytes - received)
+      chunks.push(take)
+      received += take.length
+    }
+  } finally {
+    reader.releaseLock()
+  }
+  const merged = new Uint8Array(received)
+  let offset = 0
+  for (const chunk of chunks) { merged.set(chunk, offset); offset += chunk.length }
+  return new TextDecoder('utf-8').decode(merged)
 }
 
 /** Compact human reason from an arbitrary failure. */

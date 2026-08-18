@@ -70,6 +70,6 @@ export function renderJSpaceState(state: JSpaceState, options: RenderJSpaceState
     return text + TRUNCATED + footer + closing
   }
   // Truncate the text tail within budget.
-  const remaining = maxBytes - closing.length
+  const remaining = maxBytes - closing.length - 1 // reserve the ellipsis marker
   return text.slice(0, Math.max(1, remaining)) + '…' + closing
 }

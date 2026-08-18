@@ -1,6 +1,6 @@
 {
   "name": "@deepseek-ai/dsh-evo-evidence",
-  "description": "Evidence Vault for the DSH-EVO program: an external-to-context store of exact evidence (command outputs, errors, diffs) with per-entry metadata, file-hash invalidation, and selective retrieval tools. Feature-flagged; not mounted in any profile until validated on the dev benchmark.",
+  "description": "Evidence Vault for the DSH-EVO program: an external-to-context store of exact evidence (command outputs, errors, diffs) with per-entry metadata and selective retrieval tools; content is capped at a UTF-8 byte budget and operations are appended as durable session events. Feature-flagged; not mounted in any profile until validated on the dev benchmark.",
   "version": "0.1.0-rc.7",
   "publishConfig": {
     "access": "public"

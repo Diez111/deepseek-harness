@@ -79,7 +79,7 @@ export interface Config {
   verifierEnabled?: boolean
   /** Minimum verifier score (0..4) required to complete. Default 3. */
   verifierMinScore?: number
-  /** Criteria the verifier scores against. Default Correctness + Completeness. */
+  /** Criteria the verifier scores against. Default Correctness, Completeness, and Constraint preservation. */
   verifierCriteria?: string[]
   /** Explicit verifier route (provider/model); otherwise the deployment default. */
   verifierProvider?: string
@@ -459,9 +459,10 @@ const STATE_DESCRIPTION = 'Maintain the compact durable J-Space task ledger for 
   + 'concrete action), and failed_approaches (attempts that failed and why). The '
   + 'ledger survives context compaction and is re-injected automatically; it '
   + 'must stay small and current. Call with no arguments to read the current '
-  + 'ledger. To change it, send the COMPLETE replacement arrays for any list '
-  + 'field you touch (core, verified, open, failed_approaches replace whole '
-  + 'lists). OPEN items block completion until they are resolved in the ledger '
+  + 'ledger. To change it, send the COMPLETE replacement arrays for core, '
+  + 'verified, and open; failed_approaches entries you send are MERGED with '
+  + 'any auto-persisted failed attempts (deduplicated, capped, newest first). '
+  + 'OPEN items block completion until they are resolved in the ledger '
   + 'or documented when calling jspace_finish. Use this only for tasks with '
   + 'several steps; skip it for trivial single-step work.'
 
@@ -489,7 +490,7 @@ function withTools(ctx: Context, cfg: ResolvedConfig): void {
       next: { type: 'string', description: 'Next concrete action; empty string clears it.' },
       failed_approaches: {
         type: 'array',
-        description: 'COMPLETE replacement list of failed approaches.',
+        description: 'Failed-approach entries to MERGE into the ledger (deduplicated, capped, newest first); the runtime may also append auto-detected failures.',
         items: {
           type: 'object',
           additionalProperties: false,

@@ -208,9 +208,13 @@ export function noteFirstUserComplexity(session: Session, event: SessionEvent, s
 export function apply(ctx: Context, config: Config): void {
   const enabled = config.enabled ?? true
   if (!enabled) return
-  const state: ProtocolTraceState = {}
+  // One route snapshot per session: a shared object would let an interleaved
+  // session's `request/header` leak its route onto a sibling's trace.
+  const states = new WeakMap<object, ProtocolTraceState>()
   const seen = new WeakSet<object>()
   ctx.on('session/event', (session, event) => {
+    let state = states.get(session)
+    if (state === undefined) { state = {}; states.set(session, state) }
     onSessionEvent(session, event, state)
     if (config.complexityNote ?? true) noteFirstUserComplexity(session, event, seen)
   }, { global: true })
