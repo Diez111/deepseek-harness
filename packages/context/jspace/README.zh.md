@@ -100,6 +100,6 @@ Keep this compact ledger current with jspace_state; core constraints and failed 
 - **fast 档仍暴露工具 schema**——在 `fast`/琐碎任务中动态隐藏或作用域化工具列表尚未实现；开销是保留工具以便模型升级档位的代价。
 - **完成闸门是仪式而非循环拦截**——Harness 不会检测模型的最终回答在未调用 `jspace_finish` 时声称「完成」；闸门只在工具被使用时强制清单（与 goal 工具相同的权威模型）。
 - **重试记忆为每 agent 的内存态**——它是提示而非已记录的不变量；误判重试后的提示是可接受的代价。需跨压实存续的失败进入持久账本（模型整理或 `persistFailedAttempts`）。
-- **无独立评估器**——「目标满足」与「无回归」仍是模型确认，与 goal 域把完成判断留给调用方一致。独立验证器待后续。
+- **独立验证器为选配、已校准但不完美**——设置 `verifierEnabled: true` 后，额外的 LLM 调用会按标准对完成打分（`verifierMinScore` 下限，默认 3）。基于真实标签（flash）校准：对 `verifierRounds`（默认 1；建议 3）取 min 时，10 例集上 false-accept 1/6、false-reject 0/4；单次打分不满足 1/4 的 false-accept 下限，故推荐多轮。它惩罚缺失确定性证据、违约/越权（如为通过而移除必需检查）及测试失败；代价是每次完成多一次（或 N 次）额外调用。
 - **与 dsh-goal 重叠**——账本中的 `goal` 是紧凑复述而非另一个持久目标库；两者同时挂载时请保持同步（权威目标用 `get_goal`）。
 - **基准为 Harness 机制层面**——模型层面的增益（如 J-Space 报告所称）需要真实模型的 A/B 运行；`scripts/benchmarks/jspace-ab` 中的可复现 A/B 框架在脚本化模型下测量 token、工具调用、重复、失败尝试与墙钟时间，并可指向真实 provider。

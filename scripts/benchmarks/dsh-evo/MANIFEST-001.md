@@ -21,3 +21,4 @@ _Regla 15.1: no escribir la hipótesis después de conocer el resultado. Fecha 2
 - **predicted_improvements**: reducción de false-completes; **predicted_regressions**: +1 llamada/finish, posible false-reject.
 - **calibration (conocida)**: GOOD=4, tests-fail=0, partial=1, empty=1 (probe real 4 casos).
 - **budget**: probe real <= 8 requests; **acceptance**: false-accept (tests-fail con score >= 3) < 1/4; **rollback**: verifierEnabled: false.
+- **RESULT (2026-08-18)**: sharp prompt + min-of-3 (verifierRounds=3) → **false-accept 1/6 (16.7% < 25%) MET**, false-reject 0/4, good 4/4. Stubborn class: "said done, no evidence" scores 4 even with rounds — mitigated in real use by the deterministic requireVerification gate (rejects before the verifier). Single-shot alone (rounds=1) did NOT meet the bar (2/6 false-accepts). Decision: keep enabled with verifierRounds=3; document the caveat.

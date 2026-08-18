@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  DEFAULT_VERIFIER_CRITERIA, VERIFIER_MAX_SCORE, buildVerifierPrompt, parseVerifierScore,
+  DEFAULT_VERIFIER_CRITERIA, VERIFIER_MAX_SCORE, aggregateVerifierScores, buildVerifierPrompt, parseVerifierScore,
 } from '../src/verifier-scorer.ts'
 
 describe('parseVerifierScore', () => {
@@ -30,5 +30,19 @@ describe('buildVerifierPrompt', () => {
   it('falls back to the verified list when no summary is provided', () => {
     const p = buildVerifierPrompt('g', ['module A compiles'], undefined, ['Correctness'])
     expect(p.user).toContain('module A compiles')
+  })
+})
+
+describe('aggregateVerifierScores', () => {
+  it('returns the min of repeated scores (conservative gate)', () => {
+    expect(aggregateVerifierScores([4, 0, 1])).toBe(0)
+    expect(aggregateVerifierScores([4, 4, 4])).toBe(4)
+  })
+  it('returns undefined for no judgements (fail-open)', () => {
+    expect(aggregateVerifierScores([])).toBeUndefined()
+  })
+  it('default criteria include constraint preservation', () => {
+    expect([...DEFAULT_VERIFIER_CRITERIA]).toContain('Constraint preservation')
+    expect([...DEFAULT_VERIFIER_CRITERIA]).toHaveLength(3)
   })
 })

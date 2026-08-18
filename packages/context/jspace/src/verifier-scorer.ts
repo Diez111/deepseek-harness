@@ -18,7 +18,7 @@ import type {} from '@deepseek-ai/dsh-agent-default-model'
 export const VERIFIER_MAX_SCORE = 4
 
 /** Default criteria a deployment scores against unless configured. */
-export const DEFAULT_VERIFIER_CRITERIA = ['Correctness', 'Completeness']
+export const DEFAULT_VERIFIER_CRITERIA = ['Correctness', 'Completeness', 'Constraint preservation']
 
 /**
  * Parse the first bounded integer (0..4) from a model answer. Anything else
@@ -135,4 +135,9 @@ export async function runVerifierCall(
     .filter((block): block is Extract<(typeof blocks)[number], { type: 'text' }> => block.type === 'text')
     .map(block => block.text)
     .join(' '))
+}
+
+/** Aggregate repeated verifier scores conservatively (min), for a completion gate. */
+export function aggregateVerifierScores(scores: readonly number[]): number | undefined {
+  return scores.length > 0 ? Math.min(...scores) : undefined
 }

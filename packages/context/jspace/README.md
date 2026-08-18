@@ -157,9 +157,14 @@ shadows the prior snapshot.
   invariant; advising after a mistaken retry is the accepted cost. Failures that
   must survive compaction go into the durable ledger (model curation or
   `persistFailedAttempts`).
-- **No external evaluator** — "objective satisfied" and "no regressions" remain
-  model acknowledgements, exactly as the goal domain leaves completion judgment
-  to the caller. An independent verifier is deferred.
+- **Independent verifier is opt-in, calibrated but not perfect** — with
+  `verifierEnabled: true` an extra LLM call scores the completion against the
+  criteria (`verifierMinScore` floor, default 3). Calibrated on real labels
+  (flash): min-of-`verifierRounds` (default 1; use 3) gives false-accept 1/6
+  and false-reject 0/4 on a 10-case set; single-shot alone does not meet a 1/4
+  false-accept bar, so repeated rounds are recommended. It penalizes missing
+  deterministic evidence, constraint/scope violations (e.g. removing a required
+  check), and failed tests; it costs one (or N) extra calls per finish.
 - **Overlap with dsh-goal** — `goal` in the ledger is a compact restatement,
   not another durable-goal database; when both are composed, keep them in sync
   (use `get_goal` for the authoritative objective).

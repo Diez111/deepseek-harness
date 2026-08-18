@@ -20,7 +20,7 @@ import type { PostToolDecision, ToolExecution } from '@deepseek-ai/dsh-tools'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import type {} from '@deepseek-ai/dsh-system-prompt'
 import {
-  DEFAULT_VERIFIER_CRITERIA, VERIFIER_MAX_SCORE, buildVerifierPrompt,
+  DEFAULT_VERIFIER_CRITERIA, VERIFIER_MAX_SCORE, aggregateVerifierScores, buildVerifierPrompt,
   resolveVerifierRoute, runVerifierCall,
 } from './verifier-scorer.ts'
 import { JSPACE_MAX_LIST_ITEMS, applyJSpaceStateFold, foldJSpaceState } from './fold.ts'
@@ -88,6 +88,8 @@ export interface Config {
   verifierTimeoutMs?: number
   /** Auxiliary verifier output-token cap, default 16. */
   verifierMaxOutputTokens?: number
+  /** Repeated verifier evaluations (min-aggregated). Default 1; cap 5. */
+  verifierRounds?: number
   /** Tool-name patterns to track for failure memory; empty means all. */
   attemptInclude?: string[]
   /** Tool-name patterns transparent to failure memory. */
@@ -117,6 +119,7 @@ export const Config: z<Config> = z.object({
   verifierModel: z.string(),
   verifierTimeoutMs: z.number().step(1).min(1).default(30000),
   verifierMaxOutputTokens: z.number().step(1).min(1).default(16),
+  verifierRounds: z.number().step(1).min(1).max(5).default(1),
   attemptInclude: z.array(z.string()).default([]),
   attemptExclude: z.array(z.string()).default(['todo_write', 'jspace_state', 'jspace_finish']),
   attemptPreviewChars: z.number().step(1).min(1).default(200),
@@ -143,6 +146,7 @@ interface ResolvedConfig {
   readonly verifierModel?: string
   readonly verifierTimeoutMs: number
   readonly verifierMaxOutputTokens: number
+  readonly verifierRounds: number
   readonly filter: AttemptFilter
   readonly attemptPreviewChars: number
 }
@@ -182,6 +186,7 @@ function resolveConfig(config: Config): ResolvedConfig {
     ...config.verifierModel !== undefined ? { verifierModel: config.verifierModel } : {},
     verifierTimeoutMs: config.verifierTimeoutMs ?? 30000,
     verifierMaxOutputTokens: config.verifierMaxOutputTokens ?? 16,
+    verifierRounds: config.verifierRounds ?? 1,
     filter: compileAttemptFilter(
       config.attemptInclude ?? [],
       config.attemptExclude ?? ['todo_write', 'jspace_state', 'jspace_finish'],
@@ -598,10 +603,15 @@ function withTools(ctx: Context, cfg: ResolvedConfig): void {
             summary,
             cfg.verifierCriteria,
           )
-          const score = await runVerifierCall(ctx, route, prompt, {
-            timeoutMs: cfg.verifierTimeoutMs,
-            maxOutputTokens: cfg.verifierMaxOutputTokens,
-          })
+          const scores: number[] = []
+          for (let round = 0; round < cfg.verifierRounds; round += 1) {
+            const s = await runVerifierCall(ctx, route, prompt, {
+              timeoutMs: cfg.verifierTimeoutMs,
+              maxOutputTokens: cfg.verifierMaxOutputTokens,
+            })
+            if (s !== undefined) scores.push(s)
+          }
+          const score = aggregateVerifierScores(scores)
           verifierScore = score
           if (score !== undefined && score < cfg.verifierMinScore) {
             throw new HarnessError(
