@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
 import { createUserMessage } from '@deepseek-ai/dsh-llm'
 import type { Message } from '@deepseek-ai/dsh-llm'
@@ -199,6 +199,39 @@ describe('durable state as model-visible context', () => {
     ])
     const injected = adapter.requests.some(request => requestTexts(request).some(t => t.includes('J-Space task ledger')))
     expect(injected).toBe(false)
+    await ctx.fiber.dispose()
+  })
+
+  it('mayReanchor injects a re-anchor notice when a ledger is in scope and mode is loop', async () => {
+    const ctx = await harness({ enabled: true, mode: 'loop' })
+    const agent = ctx.agentLoop.create(SessionId('rn1'), { provider: 'mock', model: 'mock' })
+    const write = await ctx.tools.execute({
+      signal: new AbortController().signal,
+      callId: 'w1',
+      name: 'jspace_state',
+      arguments: { goal: 'keep going', open: ['finish X'] },
+      agent,
+    })
+    expect(write.isError).toBe(false)
+    const inject = vi.spyOn(agent, 'inject')
+    Jspace.maybeReanchor(ctx, 'loop', agent.session)
+    expect(inject).toHaveBeenCalledTimes(1)
+    const msg = inject.mock.calls[0]![0] as { content: { type: string; text?: string }[] }
+    const text = msg.content.filter(b => b.type === 'text').map(b => b.text).join('')
+    expect(text).toContain('Re-anchor')
+    expect(text).toContain('compacted')
+    await ctx.fiber.dispose()
+  })
+
+  it('maybeReanchor is a no-op in fast mode and without a ledger', async () => {
+    const ctx = await harness({ enabled: true, mode: 'fast' })
+    const agent = ctx.agentLoop.create(SessionId('rn2'), { provider: 'mock', model: 'mock' })
+    const inject = vi.spyOn(agent, 'inject')
+    Jspace.maybeReanchor(ctx, 'fast', agent.session)
+    expect(inject).not.toHaveBeenCalled()
+    // forced loop but no ledger → no re-anchor
+    Jspace.maybeReanchor(ctx, 'loop', agent.session)
+    expect(inject).not.toHaveBeenCalled()
     await ctx.fiber.dispose()
   })
 })

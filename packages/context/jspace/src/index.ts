@@ -62,6 +62,13 @@ export interface Config {
   maxStateBytes?: number
   /** Require verified evidence before jspace_finish accepts completion, default true. */
   requireVerification?: boolean
+  /**
+   * After a context compaction, inject a re-anchor notice onto the owning
+   * agent's next request so it re-reads the durable ledger instead of
+   * drifting. Defaults to true when enabled; no-op in fast mode or without a
+   * ledger.
+   */
+  reanchorAfterCompaction?: boolean
   /** Append detected failures to the durable ledger (extra log events), default false. */
   persistFailedAttempts?: boolean
   /** Tool-name patterns to track for failure memory; empty means all. */
@@ -84,6 +91,7 @@ export const Config: z<Config> = z.object({
   maxReasonChars: z.number().step(1).min(1).default(160),
   maxStateBytes: z.number().step(1).min(1).default(2400),
   requireVerification: z.boolean().default(true),
+  reanchorAfterCompaction: z.boolean().default(true),
   persistFailedAttempts: z.boolean().default(false),
   attemptInclude: z.array(z.string()).default([]),
   attemptExclude: z.array(z.string()).default(['todo_write', 'jspace_state', 'jspace_finish']),
@@ -102,6 +110,7 @@ interface ResolvedConfig {
   readonly maxReasonChars: number
   readonly maxStateBytes: number
   readonly requireVerification: boolean
+  readonly reanchorAfterCompaction: boolean
   readonly persistFailedAttempts: boolean
   readonly filter: AttemptFilter
   readonly attemptPreviewChars: number
@@ -133,6 +142,7 @@ function resolveConfig(config: Config): ResolvedConfig {
     maxReasonChars: positiveInt(config.maxReasonChars, 160, 'maxReasonChars'),
     maxStateBytes: positiveInt(config.maxStateBytes, 2400, 'maxStateBytes'),
     requireVerification: config.requireVerification ?? true,
+    reanchorAfterCompaction: config.reanchorAfterCompaction ?? true,
     persistFailedAttempts: config.persistFailedAttempts ?? false,
     filter: compileAttemptFilter(
       config.attemptInclude ?? [],
@@ -625,6 +635,22 @@ function withAttemptGuard(ctx: Context, cfg: ResolvedConfig): void {
   })
 }
 
+/** Re-anchor notice injected after context compaction. */
+export function buildReanchorMessage(): UserMessage {
+  return createUserMessage({
+    content: [{
+      type: 'text',
+      text: '<system-reminder>\n'
+        + 'Context was compacted. Re-anchor before continuing: consult your J-Space '
+        + 'ledger (goal / core / verified / open / next) and its current content. If '
+        + 'it is missing, re-establish it and continue toward the original objective; '
+        + 'do not restart the task.\n'
+        + '</system-reminder>',
+    }],
+    source: { ...PLUGIN_SOURCE, form: 'notice', summary: 're-anchor after compaction' },
+  })
+}
+
 /** Register the dynamic ledger context block. */
 function withContext(ctx: Context, cfg: ResolvedConfig): void {
   const options: RenderJSpaceStateOptions = { maxBytes: cfg.maxStateBytes }
@@ -649,6 +675,33 @@ function withContext(ctx: Context, cfg: ResolvedConfig): void {
  * @param ctx - cordis context.
  * @param config - plugin config.
  */
+/**
+ * Re-anchor decision for one session: inject the re-anchor notice on the
+ * owning agent when a durable ledger exists and the effective tier is not
+ * fast. No-op for an ownerless session or one with no ledger.
+ * @param ctx - context carrying the agent registry.
+ * @param modeChoice - configured mode (auto resolves against the ledger).
+ * @param session - the session whose context was compacted.
+ */
+export function maybeReanchor(ctx: Context, modeChoice: JSpaceModeChoice, session: Session): void {
+  const readLedger = makeLedgerReader()
+  const state = readLedger(session)
+  if (state === null || effectiveMode(modeChoice, state) === 'fast') return
+  const agent = ctx.agents.list().find(candidate => candidate.session === session)
+  if (agent === undefined) return
+  agent.inject(buildReanchorMessage())
+}
+
+/** Re-anchor the owning agent after a durable context compaction. */
+function withReanchor(ctx: Context, cfg: ResolvedConfig): void {
+  ctx.on('session/event', (session, event) => {
+    // compaction/end arrives via the durable session log; its member type is
+    // declared by the compaction seam, so widen for the string comparison.
+    if ((event as { type?: string }).type !== 'compaction/end') return
+    maybeReanchor(ctx, cfg.mode, session)
+  }, { global: true })
+}
+
 export function apply(ctx: Context, config: Config): void {
   const cfg = resolveConfig(config)
   if (!cfg.enabled) return
@@ -660,4 +713,5 @@ export function apply(ctx: Context, config: Config): void {
   withTools(ctx, cfg)
   withContext(ctx, cfg)
   withAttemptGuard(ctx, cfg)
+  if (cfg.reanchorAfterCompaction) withReanchor(ctx, cfg)
 }
