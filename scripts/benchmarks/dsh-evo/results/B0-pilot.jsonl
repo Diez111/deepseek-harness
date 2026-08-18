@@ -1,3 +1,0 @@
-{"id":"t01-reverse","difficulty":"trivial","type":"bug-focal","origin":"mutation","status":"fail","wallMs":10301}
-{"id":"t05-eval","difficulty":"deep","type":"algorithm","origin":"mutation","status":"pass","wallMs":12131}
-{"id":"t01-reverse","difficulty":"trivial","type":"bug-focal","origin":"mutation","status":"pass","wallMs":36717}

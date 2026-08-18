@@ -1,9 +1,0 @@
-{"id":"t04-lru","difficulty":"standard","type":"stateful","origin":"mutation","status":"pass","wallMs":10954}
-{"id":"t10-is-palindrome","difficulty":"trivial","type":"edge-cases","origin":"mutation","status":"pass","wallMs":10515}
-{"id":"t05-eval","difficulty":"deep","type":"algorithm","origin":"mutation","status":"pass","wallMs":13219}
-{"id":"t07-anagram","difficulty":"trivial","type":"bug-focal","origin":"mutation","status":"pass","wallMs":10159}
-{"id":"t15-rotate-matrix","difficulty":"standard","type":"algorithm","origin":"mutation","status":"pass","wallMs":42153}
-{"id":"t12-find-missing","difficulty":"standard","type":"edge-cases","origin":"mutation","status":"pass","wallMs":15699}
-{"id":"t14-password","difficulty":"standard","type":"constraints","origin":"mutation","status":"pass","wallMs":18569}
-{"id":"t02-fizzbuzz","difficulty":"trivial","type":"bug-focal","origin":"mutation","status":"pass","wallMs":11162}
-{"id":"t01-reverse","difficulty":"trivial","type":"bug-focal","origin":"mutation","status":"pass","wallMs":17118}

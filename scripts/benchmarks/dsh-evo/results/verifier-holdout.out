@@ -1,4 +1,0 @@
-holdout (frozen rounds=3): n=8 good=4 bad=4
-false-accept=1/4 false-reject=0/4
-t01-reverse-good:true:4, t05-eval-good:true:4, t09-word-count-good:true:4, t16-minstack-good:true:4, t02-fizzbuzz-tests-fail:false:0, t07-anagram-no-evidence:false:0, t14-password-stale:false:0, t18-wildcard-premature:false:4
-DONE
