@@ -1,0 +1,39 @@
+[
+  {
+    "id": "fib",
+    "setup": "write a python 'f.py' computing fib(n); run it; print the 10th fib as FIB10=<n>",
+    "prompt": "Create python file 'f.py' with a function fib(n); add a line printing FIB10=<the 10th fibonacci&gt; and run it ('python3 f.py'). Reply with the program's printed value.",
+    "marker": "FIB10=",
+    "fixture": {
+      "f.py": "def fib(n):\n    a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a + b\n    return a\nprint('FIB10=' + str(fib(10)))\n"
+    }
+  },
+  {
+    "id": "replace",
+    "setup": "replace token TODO_AB by DONE_AB in the file; run checker",
+    "prompt": "Edit replace.txt replacing every TODO_AB with DONE_AB, then run 'python3 check.py'. Tell me the output.",
+    "marker": "DONE_OK",
+    "fixture": {
+      "replace.txt": "alpha TODO_AB beta\nTODO_AB gamma\n",
+      "check.py": "t=open('replace.txt').read(); print('DONE_OK' if t.count('TODO_AB')==0 and t.count('DONE_AB')==2 else 'FAIL')"
+    }
+  },
+  {
+    "id": "bugfix",
+    "setup": "fix bug.py so it prints BUGLESS=25",
+    "prompt": "There's 'bug.py' that has a bug. Fix it so running 'python3 bug.py' prints BUGLESS=25, run it, and report its output.",
+    "marker": "BUGLESS=25",
+    "fixture": {
+      "bug.py": "def sq(x):\n    return x * x  # bug: was x + x\nprint('BUGLESS=' + str(sq(5)))\n"
+    }
+  },
+  {
+    "id": "search",
+    "setup": "find the secret in files tree via grep; report",
+    "prompt": "Search the directory (grep -r) for the string SECRET inside 'data.txt' (a multi-line file with the token on one line), and reply with the line exactly.",
+    "marker": "SECRET",
+    "fixture": {
+      "data.txt": "noise line\nSECRET is the answer\nanother line\n"
+    }
+  }
+]
