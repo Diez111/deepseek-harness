@@ -50,7 +50,7 @@ export function buildVerifierPrompt(
     + String(VERIFIER_MAX_SCORE)
     + ' (0 = clearly wrong or incomplete, '
     + String(VERIFIER_MAX_SCORE)
-    + ' = fully satisfies the criteria). Output ONLY a single digit.'
+    + ' = fully satisfies the criteria). Failing tests, missing evidence, or plainly wrong answers MUST score 0 or 1. Output ONLY a single digit.'
   const evidence = summary !== undefined && summary.trim().length > 0
     ? summary
     : verified.length > 0 ? verified.join('; ') : '(no recorded evidence)'
