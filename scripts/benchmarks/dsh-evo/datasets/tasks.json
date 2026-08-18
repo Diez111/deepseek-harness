@@ -164,7 +164,7 @@
     "files": {
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef password_ok(pw):\n    # TODO\n    raise NotImplementedError\n"
     },
-    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('abc123a',False),('ABCcba321123',False),('Az9zA9AAAZ',True),('a1B1A1b1a',True),('aaaaaaaa',False),('A1aA1a1a1aA1aA',True)]:\n    assert sol.password_ok(a)==b, (a,sol.password_ok(a),b)\nprint('PASS')\n",
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('abc123a',False),('ABCcba321123',False),('Az9zA9AAAZ',False),('a1B1A1b1a',False),('aaaaaaaa',False),('A1bCCb1A',True),('9XyzzyX9',True)]:\n    assert sol.password_ok(a)==b, (a,sol.password_ok(a),b)\nprint('PASS')\n",
     "split": "dev"
   },
   {
