@@ -8,7 +8,7 @@
     "files": {
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef reverse(s):\n    # TODO\n    raise NotImplementedError\n"
     },
-    "oracle": "import sys\nspec=importlib.util.spec_from_file_location('sol','src/solution.py')\nsol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('',''),('a','a'),('ab','ba'),('hello','olleh'),('ñandú','údnañ'),('a'*100000, 'a'*100000)]:\n    assert sol.reverse(a)==b\nprint('PASS')\n"
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py')\nsol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('',''),('a','a'),('ab','ba'),('hello','olleh'),('ñandú','údnañ'),('a'*100000, 'a'*100000)]:\n    assert sol.reverse(a)==b\nprint('PASS')\n"
   },
   {
     "id": "t02-fizzbuzz",
