@@ -19,6 +19,10 @@ import type { AssembleContext } from '@deepseek-ai/dsh-system-prompt'
 import type { PostToolDecision, ToolExecution } from '@deepseek-ai/dsh-tools'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import type {} from '@deepseek-ai/dsh-system-prompt'
+import {
+  DEFAULT_VERIFIER_CRITERIA, VERIFIER_MAX_SCORE, buildVerifierPrompt,
+  resolveVerifierRoute, runVerifierCall,
+} from './verifier-scorer.ts'
 import { JSPACE_MAX_LIST_ITEMS, applyJSpaceStateFold, foldJSpaceState } from './fold.ts'
 import type { JSpaceStateChangeMeta } from './domain.ts'
 import { JSPACE_STATE_VERSION } from './domain.ts'
@@ -71,6 +75,19 @@ export interface Config {
   reanchorAfterCompaction?: boolean
   /** Append detected failures to the durable ledger (extra log events), default false. */
   persistFailedAttempts?: boolean
+  /** Independent verifier (LLM-as-a-verifier): an extra LLM call scores the completion. Default off. */
+  verifierEnabled?: boolean
+  /** Minimum verifier score (0..4) required to complete. Default 3. */
+  verifierMinScore?: number
+  /** Criteria the verifier scores against. Default Correctness + Completeness. */
+  verifierCriteria?: string[]
+  /** Explicit verifier route (provider/model); otherwise the deployment default. */
+  verifierProvider?: string
+  verifierModel?: string
+  /** Auxiliary verifier call timeout in ms, default 30000. */
+  verifierTimeoutMs?: number
+  /** Auxiliary verifier output-token cap, default 16. */
+  verifierMaxOutputTokens?: number
   /** Tool-name patterns to track for failure memory; empty means all. */
   attemptInclude?: string[]
   /** Tool-name patterns transparent to failure memory. */
@@ -93,6 +110,13 @@ export const Config: z<Config> = z.object({
   requireVerification: z.boolean().default(true),
   reanchorAfterCompaction: z.boolean().default(true),
   persistFailedAttempts: z.boolean().default(false),
+  verifierEnabled: z.boolean().default(false),
+  verifierMinScore: z.number().step(1).min(0).max(VERIFIER_MAX_SCORE).default(3),
+  verifierCriteria: z.array(z.string()).default([...DEFAULT_VERIFIER_CRITERIA]),
+  verifierProvider: z.string(),
+  verifierModel: z.string(),
+  verifierTimeoutMs: z.number().step(1).min(1).default(30000),
+  verifierMaxOutputTokens: z.number().step(1).min(1).default(16),
   attemptInclude: z.array(z.string()).default([]),
   attemptExclude: z.array(z.string()).default(['todo_write', 'jspace_state', 'jspace_finish']),
   attemptPreviewChars: z.number().step(1).min(1).default(200),
@@ -112,6 +136,13 @@ interface ResolvedConfig {
   readonly requireVerification: boolean
   readonly reanchorAfterCompaction: boolean
   readonly persistFailedAttempts: boolean
+  readonly verifierEnabled: boolean
+  readonly verifierMinScore: number
+  readonly verifierCriteria: string[]
+  readonly verifierProvider?: string
+  readonly verifierModel?: string
+  readonly verifierTimeoutMs: number
+  readonly verifierMaxOutputTokens: number
   readonly filter: AttemptFilter
   readonly attemptPreviewChars: number
 }
@@ -144,6 +175,13 @@ function resolveConfig(config: Config): ResolvedConfig {
     requireVerification: config.requireVerification ?? true,
     reanchorAfterCompaction: config.reanchorAfterCompaction ?? true,
     persistFailedAttempts: config.persistFailedAttempts ?? false,
+    verifierEnabled: config.verifierEnabled ?? false,
+    verifierMinScore: config.verifierMinScore ?? 3,
+    verifierCriteria: config.verifierCriteria ?? [...DEFAULT_VERIFIER_CRITERIA],
+    ...config.verifierProvider !== undefined ? { verifierProvider: config.verifierProvider } : {},
+    ...config.verifierModel !== undefined ? { verifierModel: config.verifierModel } : {},
+    verifierTimeoutMs: config.verifierTimeoutMs ?? 30000,
+    verifierMaxOutputTokens: config.verifierMaxOutputTokens ?? 16,
     filter: compileAttemptFilter(
       config.attemptInclude ?? [],
       config.attemptExclude ?? ['todo_write', 'jspace_state', 'jspace_finish'],
@@ -514,11 +552,14 @@ function withTools(ctx: Context, cfg: ResolvedConfig): void {
       schema: {
         type: 'object',
         additionalProperties: false,
-        properties: { complete: { type: 'boolean', required: true } },
+        properties: {
+          complete: { type: 'boolean', required: true },
+          verifierScore: { type: 'number' },
+        },
       },
       render: (_args, value) => [{ type: 'text' as const, text: JSON.stringify(value) }],
     },
-    execute(args, exec) {
+    async execute(args, exec) {
       if (!exec.agent) throw new HarnessError('jspace_finish requires an owning agent session', 'JSPACE_NO_AGENT')
       const previous = currentState(exec.agent.session)
       const ack: CompletionAck = {
@@ -539,6 +580,37 @@ function withTools(ctx: Context, cfg: ResolvedConfig): void {
       if (!check.ready) {
         throw new HarnessError(describeCompletion(check), 'JSPACE_COMPLETION_MISSING')
       }
+      // Independent verifier (LLM-as-a-verifier, opt-in): an extra bounded call
+      // scores the completion; a score below the floor rejects. Fails open.
+      let verifierScore: number | undefined
+      if (previous !== null && cfg.verifierEnabled && cfg.verifierCriteria.length > 0) {
+        const route = resolveVerifierRoute(ctx, {
+          ...cfg.verifierProvider !== undefined ? { verifierProvider: cfg.verifierProvider } : {},
+          ...cfg.verifierModel !== undefined ? { verifierModel: cfg.verifierModel } : {},
+        })
+        if (route !== undefined) {
+          const summary = typeof args.verified_summary === 'string' && args.verified_summary.trim().length > 0
+            ? args.verified_summary
+            : undefined
+          const prompt = buildVerifierPrompt(
+            previous.goal ?? 'complete the current task',
+            previous.verified,
+            summary,
+            cfg.verifierCriteria,
+          )
+          const score = await runVerifierCall(ctx, route, prompt, {
+            timeoutMs: cfg.verifierTimeoutMs,
+            maxOutputTokens: cfg.verifierMaxOutputTokens,
+          })
+          verifierScore = score
+          if (score !== undefined && score < cfg.verifierMinScore) {
+            throw new HarnessError(
+              `jspace_finish rejected by the verifier: score ${score} < ${cfg.verifierMinScore}`,
+              'JSPACE_VERIFIER_LOW',
+            )
+          }
+        }
+      }
       if (previous !== null) {
         const summary = trimScalar(args.verified_summary, cfg.maxItemChars)
         const now = Date.now()
@@ -558,7 +630,7 @@ function withTools(ctx: Context, cfg: ResolvedConfig): void {
           }
         })
       }
-      return Promise.resolve({ complete: true })
+      return { complete: true, ...verifierScore !== undefined ? { verifierScore } : {} }
     },
     presentCall: () => ({ card: 'generic', title: 'Verify and finish task', kind: 'other' }),
   }))
@@ -715,3 +787,11 @@ export function apply(ctx: Context, config: Config): void {
   withAttemptGuard(ctx, cfg)
   if (cfg.reanchorAfterCompaction) withReanchor(ctx, cfg)
 }
+
+export {
+  DEFAULT_VERIFIER_CRITERIA,
+  VERIFIER_MAX_SCORE,
+  buildVerifierPrompt,
+  parseVerifierScore,
+} from './verifier-scorer.ts'
+export type { VerifierRoute } from './verifier-scorer.ts'

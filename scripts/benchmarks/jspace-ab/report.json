@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-17T21:17:30.563Z",
+  "generatedAt": "2026-08-18T00:38:28.162Z",
   "arms": [
     {
       "label": "A: harness baseline",
@@ -9,7 +9,7 @@
       "toolCalls": 5,
       "repeatedToolCalls": 3,
       "failedAttempts": 3,
-      "wallTimeMs": 16.2,
+      "wallTimeMs": 19.3,
       "taskComplete": true,
       "verificationGateUsed": false,
       "ledgerWrites": 0
@@ -22,7 +22,7 @@
       "toolCalls": 6,
       "repeatedToolCalls": 1,
       "failedAttempts": 2,
-      "wallTimeMs": 17.8,
+      "wallTimeMs": 17.2,
       "taskComplete": true,
       "verificationGateUsed": true,
       "ledgerWrites": 3
