@@ -1,0 +1,107 @@
+[
+  {
+    "id": "t02-fizzbuzz",
+    "difficulty": "trivial",
+    "pred": "trivial",
+    "wallMs": 8611,
+    "status": "pass"
+  },
+  {
+    "id": "t06-vending",
+    "difficulty": "deep",
+    "pred": "trivial",
+    "wallMs": 43283,
+    "status": "pass"
+  },
+  {
+    "id": "t07-anagram",
+    "difficulty": "trivial",
+    "pred": "trivial",
+    "wallMs": 34926,
+    "status": "pass"
+  },
+  {
+    "id": "t11-remove-dupes",
+    "difficulty": "standard",
+    "pred": "trivial",
+    "wallMs": 69687,
+    "status": "pass"
+  },
+  {
+    "id": "t12-find-missing",
+    "difficulty": "standard",
+    "pred": "trivial",
+    "wallMs": 8628,
+    "status": "pass"
+  },
+  {
+    "id": "t13-merge-sorted",
+    "difficulty": "standard",
+    "pred": "trivial",
+    "wallMs": 13432,
+    "status": "pass"
+  },
+  {
+    "id": "t14-password",
+    "difficulty": "standard",
+    "pred": "trivial",
+    "wallMs": 21438,
+    "status": "pass"
+  },
+  {
+    "id": "t17-intervals",
+    "difficulty": "deep",
+    "pred": "trivial",
+    "wallMs": 16334,
+    "status": "pass"
+  },
+  {
+    "id": "t18-wildcard",
+    "difficulty": "deep",
+    "pred": "trivial",
+    "wallMs": 20820,
+    "status": "pass"
+  },
+  {
+    "id": "t20-run-length",
+    "difficulty": "deep",
+    "pred": "trivial",
+    "wallMs": 16415,
+    "status": "pass"
+  },
+  {
+    "id": "t21-kth-largest",
+    "difficulty": "deep",
+    "pred": "trivial",
+    "wallMs": 18798,
+    "status": "pass"
+  },
+  {
+    "id": "t22-card-sort",
+    "difficulty": "standard",
+    "pred": "trivial",
+    "wallMs": 50855,
+    "status": "pass"
+  },
+  {
+    "id": "t23-move-zeros",
+    "difficulty": "trivial",
+    "pred": "trivial",
+    "wallMs": 15237,
+    "status": "pass"
+  },
+  {
+    "id": "t24-int-to-words",
+    "difficulty": "deep",
+    "pred": "trivial",
+    "wallMs": 25420,
+    "status": "pass"
+  },
+  {
+    "id": "t26-nearest-point",
+    "difficulty": "deep",
+    "pred": "trivial",
+    "wallMs": 18813,
+    "status": "pass"
+  }
+]
