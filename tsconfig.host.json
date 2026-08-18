@@ -186,6 +186,7 @@
     { "path": "./packages/interaction/tool-ask-user" },
     { "path": "./packages/context/agent-instructions" },
     { "path": "./packages/context/jspace" },
+    { "path": "./packages/context/dsh-protocol-trace" },
     { "path": "./packages/core/agent-loop" },
     { "path": "./packages/llm/llm-retry" },
     { "path": "./packages/examples/agent-spine-demo" },
