@@ -194,7 +194,14 @@ export function applyJSpaceStateFold(state: JSpaceState | null, event: SessionEv
   if (event.type !== 'jspace/state') return state
   const change = decodeJSpaceChange(event.data)
   if (change === undefined) return state
-  return change.operation === 'clear' ? null : change.state
+  if (change.operation === 'clear') return null
+  // Declared contract: a positive monotonic revision. A later set that does
+  // not advance the folded revision means the log is corrupt (reordered or
+  // rewritten), and silently last-write-wins would reconstruct a wrong ledger.
+  if (state !== null && change.state.revision <= state.revision) {
+    throw new Error(`jspace state revision must be monotonic: ${String(change.state.revision)} after ${String(state.revision)}`)
+  }
+  return change.state
 }
 
 /**

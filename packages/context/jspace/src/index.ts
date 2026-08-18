@@ -786,6 +786,10 @@ function withReanchor(ctx: Context, cfg: ResolvedConfig): void {
 }
 
 export function apply(ctx: Context, config: Config): void {
+  if ((config.verifierProvider === undefined) !== (config.verifierModel === undefined)) {
+    throw new Error('jspace: verifierProvider and verifierModel must be configured together')
+  }
+
   const cfg = resolveConfig(config)
   if (!cfg.enabled) return
   if (cfg.autoGuide) {

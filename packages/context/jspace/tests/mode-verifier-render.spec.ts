@@ -145,7 +145,7 @@ describe('renderJSpaceState', () => {
       next: 'n1',
       failedApproaches: [{ action: 'f1', result: 'failed', reason: 'r1', at: 1 }],
     }), { maxBytes: 120 })
-    expect(text.length).toBeLessThanOrEqual(121)
+    expect(text.length).toBeLessThanOrEqual(120)
     expect(text).toContain('</system-reminder>')
     expect(text).toContain('J-Space task ledger')
   })
