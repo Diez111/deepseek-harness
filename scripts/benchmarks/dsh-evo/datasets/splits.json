@@ -2,29 +2,52 @@
   "seed": 20260818,
   "split": {
     "dev": [
-      "t04-lru",
-      "t10-is-palindrome",
-      "t05-eval",
+      "t17-intervals",
       "t07-anagram",
-      "t15-rotate-matrix",
-      "t12-find-missing",
-      "t14-password",
-      "t02-fizzbuzz",
-      "t01-reverse"
-    ],
-    "val": [
-      "t16-minstack",
-      "t03-longest-run",
-      "t08-nth-fib",
-      "t13-merge-sorted",
-      "t06-vending"
-    ],
-    "sealed": [
+      "t01-reverse",
       "t18-wildcard",
       "t09-word-count",
+      "t13-merge-sorted",
+      "t12-find-missing",
+      "t25-frequency-table",
       "t11-remove-dupes",
-      "t17-intervals"
+      "t27-tokenize",
+      "t09-word-count",
+      "t17-intervals",
+      "t16-minstack",
+      "t20-run-length",
+      "t10-is-palindrome"
+    ],
+    "val": [
+      "t06-vending",
+      "t22-card-sort",
+      "t13-merge-sorted",
+      "t15-rotate-matrix",
+      "t04-lru",
+      "t08-nth-fib",
+      "t08-nth-fib",
+      "t21-kth-largest"
+    ],
+    "sealed": [
+      "t11-remove-dupes",
+      "t03-longest-run",
+      "t12-find-missing",
+      "t19-json-path",
+      "t14-password",
+      "t26-nearest-point",
+      "t23-move-zeros",
+      "t29-stones",
+      "t05-eval",
+      "t02-fizzbuzz",
+      "t18-wildcard",
+      "t07-anagram",
+      "t30-fmt-intervals",
+      "t24-int-to-words",
+      "t15-rotate-matrix",
+      "t16-minstack",
+      "t10-is-palindrome",
+      "t14-password",
+      "t28-clamp-range"
     ]
-  },
-  "note": "sealed no se usa hasta congelar arquitectura"
+  }
 }

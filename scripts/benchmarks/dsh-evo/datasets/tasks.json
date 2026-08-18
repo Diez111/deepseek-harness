@@ -21,7 +21,7 @@
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef fizzbuzz(n):\n    # TODO\n    raise NotImplementedError\n"
     },
     "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nassert sol.fizzbuzz(1)==['1']\nassert sol.fizzbuzz(15)[2]=='Fizz' and sol.fizzbuzz(15)[4]=='Buzz' and sol.fizzbuzz(15)[14]=='FizzBuzz'\nassert sol.fizzbuzz(3)==['1','2','Fizz']\nprint('PASS')\n",
-    "split": "dev"
+    "split": "sealed"
   },
   {
     "id": "t03-longest-run",
@@ -33,7 +33,7 @@
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef longest_run(s):\n    # TODO\n    raise NotImplementedError\n"
     },
     "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('',0),('a',1),('aaabbb',3),('abcaabbcc',2),('zzzz',4),('aabbaaa',3),('Aaa',2)]:\n    assert sol.longest_run(a)==b, (a,sol.longest_run(a),b)\nprint('PASS')\n",
-    "split": "val"
+    "split": "sealed"
   },
   {
     "id": "t04-lru",
@@ -45,7 +45,7 @@
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\nclass LRUCache:\n    def __init__(self, capacity):\n        raise NotImplementedError\n    def get(self, key):\n        raise NotImplementedError\n    def put(self, key, value):\n        raise NotImplementedError\n"
     },
     "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nc=sol.LRUCache(2); c.put(1,1); c.put(2,2); assert c.get(1)==1; c.put(3,3); assert c.get(2)==-1; c.put(4,4); assert c.get(1)==-1; assert c.get(3)==3; assert c.get(4)==4\nc2=sol.LRUCache(1); c2.put('a',1); c2.put('b',2); assert c2.get('a')==-1 and c2.get('b')==2\nprint('PASS')\n",
-    "split": "dev"
+    "split": "val"
   },
   {
     "id": "t05-eval",
@@ -57,7 +57,7 @@
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef evaluate(expr):\n    # TODO\n    raise NotImplementedError\n"
     },
     "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('3+5*2',13),('(2+3)*4',20),('10-4*2',2),('7',7),('1+2*3-4',3),('(1+2)*(3+4)',21),('2*3+4*5',26),('((2+3))',5)]:\n    assert sol.evaluate(a)==b, (a,sol.evaluate(a),b)\nprint('PASS')\n",
-    "split": "dev"
+    "split": "sealed"
   },
   {
     "id": "t06-vending",
@@ -105,7 +105,7 @@
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef word_count(s):\n    # TODO\n    raise NotImplementedError\n"
     },
     "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('',0),('   ',0),('a',1),('hello world',2),('  a  b  ',2),('one two three',3),('\\t\\n',0),('a\\nb',2)]:\n    assert sol.word_count(a)==b, (a,sol.word_count(a),b)\nprint('PASS')\n",
-    "split": "sealed"
+    "split": "dev"
   },
   {
     "id": "t10-is-palindrome",
@@ -129,7 +129,7 @@
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef remove_duplicates(xs):\n    # TODO\n    raise NotImplementedError\n"
     },
     "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [([],[],),([1,2,3],[1,2,3]),([1,1,2,1,3,2],[1,2,3]),(['a','b','a'],['a','b']),([1,2,2,3,3,3],[1,2,3])]:\n    assert sol.remove_duplicates(a)==b, (a,sol.remove_duplicates(a),b)\nprint('PASS')\n",
-    "split": "sealed"
+    "split": "dev"
   },
   {
     "id": "t12-find-missing",
@@ -153,7 +153,7 @@
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef merge_sorted(a, b):\n    # TODO\n    raise NotImplementedError\n"
     },
     "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b,exp in [([],[],[]),([1],[],[1]),([],[2],[2]),([1,3,5],[2,4],[1,2,3,4,5]),([1,2],[1,2],[1,1,2,2]),([-1,0],[2,3],[-1,0,2,3])]:\n    assert sol.merge_sorted(a,b)==exp, (a,b,sol.merge_sorted(a,b))\nprint('PASS')\n",
-    "split": "val"
+    "split": "dev"
   },
   {
     "id": "t14-password",
@@ -165,7 +165,7 @@
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef password_ok(pw):\n    # TODO\n    raise NotImplementedError\n"
     },
     "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('abc123a',False),('ABCcba321123',False),('Az9zA9AAAZ',False),('a1B1A1b1a',False),('aaaaaaaa',False),('A1bCCb1A',True),('9XyzzyX9',True)]:\n    assert sol.password_ok(a)==b, (a,sol.password_ok(a),b)\nprint('PASS')\n",
-    "split": "dev"
+    "split": "sealed"
   },
   {
     "id": "t15-rotate-matrix",
@@ -177,7 +177,7 @@
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef rotate90(m):\n    # TODO\n    raise NotImplementedError\n"
     },
     "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor m,exp in [([[1]],[[1]]),([[1,2],[3,4]],[[3,1],[4,2]]),([[1,2,3],[4,5,6],[7,8,9]],[[7,4,1],[8,5,2],[9,6,3]])]:\n    assert sol.rotate90(m)==exp, (m,sol.rotate90(m))\nprint('PASS')\n",
-    "split": "dev"
+    "split": "val"
   },
   {
     "id": "t16-minstack",
@@ -189,7 +189,7 @@
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\nclass MinStack:\n    def __init__(self):\n        raise NotImplementedError\n    def push(self, x):\n        raise NotImplementedError\n    def pop(self):\n        raise NotImplementedError\n    def top(self):\n        raise NotImplementedError\n    def getMin(self):\n        raise NotImplementedError\n"
     },
     "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nm=sol.MinStack(); m.push(-2); m.push(0); m.push(-3); assert m.getMin()==-3; m.pop(); assert m.top()==0; assert m.getMin()==-2\nm2=sol.MinStack(); m2.push(1); m2.push(2); assert m2.getMin()==1; m2.pop(); m2.pop(); m2.pop(); assert m2.top() is None\nprint('PASS')\n",
-    "split": "val"
+    "split": "dev"
   },
   {
     "id": "t17-intervals",
@@ -201,7 +201,7 @@
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef merge_intervals(intervals):\n    # TODO\n    raise NotImplementedError\n"
     },
     "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,exp in [([],[]),([[1,3]],[[1,3]]),([[1,3],[2,6],[8,10]],[[1,6],[8,10]]),([[1,4],[4,5]],[[1,5]]),([[6,7],[1,2],[3,5]],[[1,2],[3,5],[6,7]])]:\n    assert sol.merge_intervals(a)==exp, (a,sol.merge_intervals(a))\nprint('PASS')\n",
-    "split": "sealed"
+    "split": "dev"
   },
   {
     "id": "t18-wildcard",
@@ -213,6 +213,294 @@
       "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef wildcard_match(pattern, text):\n    # TODO\n    raise NotImplementedError\n"
     },
     "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor p,t,exp in [('','',True),('','a',False),('a','a',True),('a','b',False),('?','a',True),('?','ab',False),('*','',True),('*','anything',True),('a*b','axxb',True),('a*b','ax',False),('a?c','abc',True),('a?c','ac',False),('*a*a','banana',True)]:\n    assert sol.wildcard_match(p,t)==exp, (p,t,sol.wildcard_match(p,t))\nprint('PASS')\n",
+    "split": "dev"
+  },
+  {
+    "id": "t07-anagram",
+    "origin": "mutation",
+    "type": "bug-focal",
+    "difficulty": "trivial",
+    "problem": "Implement `are_anagrams(a, b)` in src/solution.py: True iff a and b contain exactly the same characters (any order), case-sensitive, spaces count. Empty strings are anagrams.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef are_anagrams(a, b):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b,exp in [('','',True),('a','a',True),('ab','ba',True),('ab','aa',False),('abc','ab',False),('a b','ab',False),('aa','a a',False)]:\n    assert sol.are_anagrams(a,b)==exp, (a,b,sol.are_anagrams(a,b))\nprint('PASS')\n",
+    "split": "dev"
+  },
+  {
+    "id": "t08-nth-fib",
+    "origin": "mutation",
+    "type": "bug-focal",
+    "difficulty": "trivial",
+    "problem": "Implement `fib(n)` in src/solution.py: returns the n-th Fibonacci number, fib(0)=0, fib(1)=1, fib(n)=fib(n-1)+fib(n-2) for n>=0. Must handle n=30 without crashing.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef fib(n):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor n,exp in [(0,0),(1,1),(2,1),(5,5),(10,55),(30,832040)]:\n    assert sol.fib(n)==exp, (n,sol.fib(n))\nprint('PASS')\n",
+    "split": "val"
+  },
+  {
+    "id": "t09-word-count",
+    "origin": "mutation",
+    "type": "edge-cases",
+    "difficulty": "trivial",
+    "problem": "Implement `word_count(s)` in src/solution.py: returns the number of words in s, where words are maximal sequences of non-whitespace characters. Empty/mostly-space strings -> 0.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef word_count(s):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('',0),('   ',0),('a',1),('hello world',2),('  a  b  ',2),('one two three',3),('\\t\\n',0),('a\\nb',2)]:\n    assert sol.word_count(a)==b, (a,sol.word_count(a),b)\nprint('PASS')\n",
+    "split": "dev"
+  },
+  {
+    "id": "t10-is-palindrome",
+    "origin": "mutation",
+    "type": "edge-cases",
+    "difficulty": "trivial",
+    "problem": "Implement `is_palindrome(s)` in src/solution.py: True iff s reads the same forwards/backwards ignoring case and non-alphanumeric characters. Empty -> True.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef is_palindrome(s):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('',True),('a',True),('ab',False),('A man a plan a canal Panama',True),('race a car',False),('...a...',True),('abba',True),('0a0',True)]:\n    assert sol.is_palindrome(a)==b, (a,sol.is_palindrome(a),b)\nprint('PASS')\n",
+    "split": "dev"
+  },
+  {
+    "id": "t11-remove-dupes",
+    "origin": "mutation",
+    "type": "edge-cases",
+    "difficulty": "standard",
+    "problem": "Implement `remove_duplicates(xs)` in src/solution.py: returns a new list keeping the FIRST occurrence of each element in original order.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef remove_duplicates(xs):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [([],[],),([1,2,3],[1,2,3]),([1,1,2,1,3,2],[1,2,3]),(['a','b','a'],['a','b']),([1,2,2,3,3,3],[1,2,3])]:\n    assert sol.remove_duplicates(a)==b, (a,sol.remove_duplicates(a),b)\nprint('PASS')\n",
+    "split": "dev"
+  },
+  {
+    "id": "t12-find-missing",
+    "origin": "mutation",
+    "type": "edge-cases",
+    "difficulty": "standard",
+    "problem": "Implement `find_missing(xs)` in src/solution.py: xs is a permutation of 1..n with ONE number missing (n = len(xs)+1). Return the missing number.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef find_missing(xs):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [([1],2),([2],1),([1,3],2),([1,2,3,5,4,7,8],6),([2,3,4,5,6],1),([1,2,3,4,5,6,7,8,10],9)]:\n    assert sol.find_missing(a)==b, (a,sol.find_missing(a),b)\nprint('PASS')\n",
+    "split": "dev"
+  },
+  {
+    "id": "t13-merge-sorted",
+    "origin": "mutation",
+    "type": "algorithm",
+    "difficulty": "standard",
+    "problem": "Implement `merge_sorted(a, b)` in src/solution.py: merges two ascending lists into one ascending list. Must NOT mutate inputs. Return a new list.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef merge_sorted(a, b):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b,exp in [([],[],[]),([1],[],[1]),([],[2],[2]),([1,3,5],[2,4],[1,2,3,4,5]),([1,2],[1,2],[1,1,2,2]),([-1,0],[2,3],[-1,0,2,3])]:\n    assert sol.merge_sorted(a,b)==exp, (a,b,sol.merge_sorted(a,b))\nprint('PASS')\n",
+    "split": "dev"
+  },
+  {
+    "id": "t14-password",
+    "origin": "mutation",
+    "type": "constraints",
+    "difficulty": "standard",
+    "problem": "Implement `password_ok(pw)` in src/solution.py: returns True iff pw has length>=8, at least one uppercase, at least one digit, and equals its own reverse (palindrome). Otherwise False.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef password_ok(pw):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('abc123a',False),('ABCcba321123',False),('Az9zA9AAAZ',True),('a1B1A1b1a',True),('aaaaaaaa',False),('A1aA1a1a1aA1aA',True)]:\n    assert sol.password_ok(a)==b, (a,sol.password_ok(a),b)\nprint('PASS')\n",
+    "split": "sealed"
+  },
+  {
+    "id": "t15-rotate-matrix",
+    "origin": "mutation",
+    "type": "algorithm",
+    "difficulty": "standard",
+    "problem": "Implement `rotate90(m)` in src/solution.py: returns a NEW matrix (list of lists) rotated 90 degrees clockwise. Input is a square matrix of ints; do not mutate the input.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef rotate90(m):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor m,exp in [([[1]],[[1]]),([[1,2],[3,4]],[[3,1],[4,2]]),([[1,2,3],[4,5,6],[7,8,9]],[[7,4,1],[8,5,2],[9,6,3]])]:\n    assert sol.rotate90(m)==exp, (m,sol.rotate90(m))\nprint('PASS')\n",
+    "split": "val"
+  },
+  {
+    "id": "t16-minstack",
+    "origin": "mutation",
+    "type": "stateful",
+    "difficulty": "deep",
+    "problem": "Implement `MinStack` in src/solution.py: push(x), pop(), top(), getMin() all O(1). pop on empty is a no-op; top on empty returns None.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\nclass MinStack:\n    def __init__(self):\n        raise NotImplementedError\n    def push(self, x):\n        raise NotImplementedError\n    def pop(self):\n        raise NotImplementedError\n    def top(self):\n        raise NotImplementedError\n    def getMin(self):\n        raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nm=sol.MinStack(); m.push(-2); m.push(0); m.push(-3); assert m.getMin()==-3; m.pop(); assert m.top()==0; assert m.getMin()==-2\nm2=sol.MinStack(); m2.push(1); m2.push(2); assert m2.getMin()==1; m2.pop(); m2.pop(); m2.pop(); assert m2.top() is None\nprint('PASS')\n",
+    "split": "dev"
+  },
+  {
+    "id": "t17-intervals",
+    "origin": "mutation",
+    "type": "algorithm",
+    "difficulty": "deep",
+    "problem": "Implement `merge_intervals(intervals)` in src/solution.py: takes a list of pairs [start, end] (start<=end) and returns the merged intervals (overlapping or adjacent [a,b],[b,c] merge) sorted by start.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef merge_intervals(intervals):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,exp in [([],[]),([[1,3]],[[1,3]]),([[1,3],[2,6],[8,10]],[[1,6],[8,10]]),([[1,4],[4,5]],[[1,5]]),([[6,7],[1,2],[3,5]],[[1,2],[3,5],[6,7]])]:\n    assert sol.merge_intervals(a)==exp, (a,sol.merge_intervals(a))\nprint('PASS')\n",
+    "split": "dev"
+  },
+  {
+    "id": "t18-wildcard",
+    "origin": "mutation",
+    "type": "algorithm",
+    "difficulty": "deep",
+    "problem": "Implement `wildcard_match(pattern, text)` in src/solution.py: pattern may contain '*' (matches any sequence, including empty) and '?' (any single char); other chars match literally. Full-string match required (anchored).",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef wildcard_match(pattern, text):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor p,t,exp in [('','',True),('','a',False),('a','a',True),('a','b',False),('?','a',True),('?','ab',False),('*','',True),('*','anything',True),('a*b','axxb',True),('a*b','ax',False),('a?c','abc',True),('a?c','ac',False),('*a*a','banana',True)]:\n    assert sol.wildcard_match(p,t)==exp, (p,t,sol.wildcard_match(p,t))\nprint('PASS')\n",
+    "split": "dev"
+  },
+  {
+    "id": "t19-json-path",
+    "origin": "mutation",
+    "type": "algorithm",
+    "difficulty": "deep",
+    "problem": "Implement `json_get(data, path)` in src/solution.py: path is a dot-separated key chain into nested dicts/lists (list indices as digits, e.g. 'a.0.b'); return the value or None if any key/index is missing. Keys are strings without dots.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef json_get(data, path):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nassert sol.json_get({'a':[{'b':1}]},'a.0.b')==1\nassert sol.json_get({'a':[{'b':1}]},'a.0')=={'b':1}\nassert sol.json_get({'a':1},'a.b') is None\nassert sol.json_get({'x':{'y':[10,20]}},'x.y.1')==20\nassert sol.json_get({},'a') is None\nprint('PASS')\n",
+    "split": "sealed"
+  },
+  {
+    "id": "t20-run-length",
+    "origin": "mutation",
+    "type": "edge-cases",
+    "difficulty": "deep",
+    "problem": "Implement `encode_rle(s)` in src/solution.py: run-length encode a string: consecutive equal chars -> char+count (count>=2 only). E.g. 'aaab' -> 'a3b', 'ab' -> 'ab', '' -> ''. And `decode_rle(s)` reverses it (letters then optional count digits).",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef encode_rle(s):\n    # TODO\n    raise NotImplementedError\ndef decode_rle(s):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('',''),('a','a'),('aaab','a3b'),('abcc','abc2'),('aaaa','a4'),('aabbbcc','a2b3c2')]:\n    assert sol.encode_rle(a)==b, (a,sol.encode_rle(a),b)\nfor a,b in [('', ''),('a3b','aaab'),('ab','ab'),('a4','aaaa'),('b2c2','bbcc')]:\n    assert sol.decode_rle(a)==b, (a,sol.decode_rle(a),b)\nprint('PASS')\n",
+    "split": "dev"
+  },
+  {
+    "id": "t21-kth-largest",
+    "origin": "mutation",
+    "type": "algorithm",
+    "difficulty": "deep",
+    "problem": "Implement `kth_largest(xs, k)` in src/solution.py: returns the k-th largest distinct value (1-indexed) from a list of ints; if k exceeds the number of distinct values return None. xs may be large (10^5) — O(n log n) fine, avoid O(n^2).",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef kth_largest(xs, k):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nassert sol.kth_largest([3,1,4,1,5,9,2,6],1)==9\nassert sol.kth_largest([3,1,4,1,5],2)==4\nassert sol.kth_largest([1,1,1],1)==1\nassert sol.kth_largest([1,2],3) is None\nbig=list(range(100000)); assert sol.kth_largest(big,1)==99999\nprint('PASS')\n",
+    "split": "val"
+  },
+  {
+    "id": "t22-card-sort",
+    "origin": "mutation",
+    "type": "edge-cases",
+    "difficulty": "standard",
+    "problem": "Implement `sort_cards(hand)` in src/solution.py: sorts a list of card strings by rank then suit, ranks order: 2,3,4,5,6,7,8,9,10,J,Q,K,A; suits: clubs, diamonds, hearts, spades (C,D,H,S suffix). Example '10H' < '2C'? No: rank order by value, so '2C' < '10H'. Return sorted list.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef sort_cards(hand):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nrank={'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'J':11,'Q':12,'K':13,'A':14}\nassert sol.sort_cards(['2C','10H','AS','3D'])==['2C','3D','10H','AS']\nassert sol.sort_cards(['QC','JS','10D','KC'])==['10D','JS','QC','KC']\nassert sol.sort_cards(['AH','2S','AC','2H'])==['2H','2S','AC','AH']\nprint('PASS')\n",
+    "split": "val"
+  },
+  {
+    "id": "t23-move-zeros",
+    "origin": "mutation",
+    "type": "edge-cases",
+    "difficulty": "trivial",
+    "problem": "Implement `move_zeros(xs)` in src/solution.py: returns a new list with all zeros moved to the end, preserving the relative order of non-zero elements. Do not mutate the input.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef move_zeros(xs):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nassert sol.move_zeros([0])==[0]\nassert sol.move_zeros([1])==[1]\nassert sol.move_zeros([0,1,0,3,12])==[1,3,12,0,0]\nassert sol.move_zeros([])==[]\nassert sol.move_zeros([0,0,0])==[0,0,0]\nprint('PASS')\n",
+    "split": "sealed"
+  },
+  {
+    "id": "t24-int-to-words",
+    "origin": "mutation",
+    "type": "bug-focal",
+    "difficulty": "deep",
+    "problem": "Implement `to_words(n)` in src/solution.py: converts a non-negative integer 0..999_999_999 to English words, lower case. Examples: 0->'zero', 12->'twelve', 23->'twenty three', 100->'one hundred', 115->'one hundred fifteen', 1000->'one thousand', 100100->'one hundred thousand one hundred', hyphenation not needed.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef to_words(n):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [(0,'zero'),(5,'five'),(10,'ten'),(12,'twelve'),(20,'twenty'),(21,'twenty one'),(30,'thirty'),(42,'forty two'),(99,'ninety nine'),(100,'one hundred'),(115,'one hundred fifteen'),(1000,'one thousand'),(1001,'one thousand one'),(1100,'one thousand one hundred'),(100000,'one hundred thousand'),(100100,'one hundred thousand one hundred'),(999999999,'nine hundred ninety nine million nine hundred ninety nine thousand nine hundred ninety nine')]:\n    assert sol.to_words(a)==b, (a,sol.to_words(a),b)\nprint('PASS')\n",
+    "split": "sealed"
+  },
+  {
+    "id": "t25-frequency-table",
+    "origin": "mutation",
+    "type": "stateful",
+    "difficulty": "deep",
+    "problem": "Implement a `FrequencyTracker` in src/solution.py: `add(x)` increments x's count; `remove(x)` decrements (min 0, ignore if 0); `hasFrequency(f)` returns True iff SOME value currently has count exactly f. All O(1) time.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\nclass FrequencyTracker:\n    def __init__(self):\n        raise NotImplementedError\n    def add(self, x):\n        raise NotImplementedError\n    def remove(self, x):\n        raise NotImplementedError\n    def hasFrequency(self, f):\n        raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nft=sol.FrequencyTracker(); ft.add(3); ft.add(3); assert ft.hasFrequency(2) and not ft.hasFrequency(1)\nft.add(1); assert ft.hasFrequency(1)\nft.remove(3); assert ft.hasFrequency(1) and not ft.hasFrequency(2)\nft.remove(3); ft.remove(3); assert not ft.hasFrequency(1) or ft.hasFrequency(1)\nft2=sol.FrequencyTracker(); ft2.add(5); ft2.remove(5); assert not ft2.hasFrequency(0) and not ft2.hasFrequency(1)\nprint('PASS')\n",
+    "split": "dev"
+  },
+  {
+    "id": "t26-nearest-point",
+    "origin": "mutation",
+    "type": "algorithm",
+    "difficulty": "deep",
+    "problem": "Implement `nearest(origin, points)` in src/solution.py: returns the point [x,y] (as a list) from `points` closest to `origin` by squared Euclidean distance; ties broken by the first occurrence. origin and points are [x,y] pairs.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef nearest(origin, points):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nassert sol.nearest([0,0],[[1,1],[2,2]])==[1,1]\nassert sol.nearest([0,0],[[2,2],[1,1]])==[1,1]\nassert sol.nearest([5,5],[[4,4],[100,0]])==[4,4]\nassert sol.nearest([0,0],[[0,0]])==[0,0]\nassert sol.nearest([0,0],[[-1,-1],[1,1]])==[-1,-1]\nprint('PASS')\n",
+    "split": "sealed"
+  },
+  {
+    "id": "t27-tokenize",
+    "origin": "mutation",
+    "type": "parse",
+    "difficulty": "deep",
+    "problem": "Implement `tokenize(s)` in src/solution.py: splits s into tokens: identifiers (`[a-zA-Z_][a-zA-Z0-9_]*`), numbers (digits), and single-char operators `+ - * / ( ) =`. Ignore spaces. Return a list of token strings. Example: 'a + b2 *( 3 )' -> ['a','+','b2','*','(','3',')'].",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef tokenize(s):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nassert sol.tokenize('a + 1')==['a','+','1']\nassert sol.tokenize('a+b2*(3)')==['a','+','b2','*','(','3',')']\nassert sol.tokenize('x')==['x']\nassert sol.tokenize('')==[]\nassert sol.tokenize('10+20')==['10','+','20']\nprint('PASS')\n",
+    "split": "dev"
+  },
+  {
+    "id": "t28-clamp-range",
+    "origin": "mutation",
+    "type": "edge-cases",
+    "difficulty": "standard",
+    "problem": "Implement `clamp(x, lo, hi)` in src/solution.py: returns lo if x<lo, hi if x>hi, else x. And `clamp_list(xs, lo, hi)` returns a NEW list with each element clamped (do not mutate input).",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef clamp(x, lo, hi):\n    # TODO\n    raise NotImplementedError\ndef clamp_list(xs, lo, hi):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nassert sol.clamp(5,0,10)==5 and sol.clamp(-1,0,10)==0 and sol.clamp(11,0,10)==10\nxs=[-5,0,3,10,15]; out=sol.clamp_list(xs,0,10); assert out==[0,0,3,10,10] and xs==[-5,0,3,10,15]\nprint('PASS')\n",
+    "split": "sealed"
+  },
+  {
+    "id": "t29-stones",
+    "origin": "mutation",
+    "type": "stateful",
+    "difficulty": "deep",
+    "problem": "Implement a game in src/solution.py: function `play(stones)` where `stones` is a positive int pile; two players alternate taking 1 or 2 stones; the player who takes the last stone wins. Return True if the FIRST player (you) can force a win with optimal play, else False. stones up to 10^5.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef play(stones):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [(1,True),(2,True),(3,False),(4,True),(5,True),(6,False),(100000,True),(99999,False)]:\n    assert sol.play(a)==b, (a,sol.play(a),b)\nprint('PASS')\n",
+    "split": "sealed"
+  },
+  {
+    "id": "t30-fmt-intervals",
+    "origin": "mutation",
+    "type": "edge-cases",
+    "difficulty": "standard",
+    "problem": "Implement `fmt(intervals)` in src/solution.py: input is a sorted, non-overlapping list of [start,end] int pairs; return a compact string: pages separated by ',', consecutive runs as 'a-b' when run length >=3 else 'a,b'. Example [[1,3],[5,5]] -> '1-3,5' (1-3 is a run of 3); [[1,2],[4,6]] -> '1,2,4-6'.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef fmt(intervals):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nprint('PASS kind with a couple of checks below')\nassert sol.fmt([[1,3],[5,5]])=='1-3,5'\nassert sol.fmt([[1,2],[4,6]])=='1,2,4-6'\nassert sol.fmt([[1,1]])=='1'\nassert sol.fmt([[1,3]])=='1-3'\nassert sol.fmt([[1,2],[3,4],[7,9]])=='1-4,7-9'\nprint('PASS')\n",
     "split": "sealed"
   }
 ]
