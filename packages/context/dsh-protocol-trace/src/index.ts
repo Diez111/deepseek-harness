@@ -19,6 +19,8 @@ declare module '@deepseek-ai/dsh-session/types' {
   interface SessionEventMap {
     /** Log-only per-request protocol trace (route, effort, tokens, reasoning, cache). @mode Log */
     'session/protocol-trace': ProtocolTracePayload
+    /** Log-only passive complexity estimate for the first user message of a session. @mode Log */
+    'session/complexity-note': ComplexityNotePayload
   }
 }
 
@@ -59,6 +61,37 @@ export interface RouteSnapshot {
   reasoningEffort?: string
   maxTokens?: number
   temperature?: number
+}
+
+/** Passive complexity tiers used by the routing-note predictor. */
+export type ComplexityTier = 'trivial' | 'standard' | 'deep'
+
+/** Payload of one `session/complexity-note` event (measure-first, never routes). */
+export interface ComplexityNotePayload {
+  tier: ComplexityTier
+  signals: { chars: number; strong: number; action: number }
+  ts: number
+}
+
+/**
+ * Predict a task complexity tier from the first user message using cheap,
+ * deterministic heuristics (message size, strong problem keywords, action
+ * verbs). Purely observational: it records a signal and never changes effort
+ * or budget; it is calibration data for the adaptive router phase.
+ * @param text - the first user message text.
+ * @returns the predicted tier.
+ */
+const STRONG_WORDS = ['bug', 'bugfix', 'debug', 'concurr', 'race', 'thread', 'deadlock', 'parse', 'precedence', 'compile', 'refactor', 'migrat', 'architecture', 'build', 'regression']
+const ACTION_WORDS = ['run', 'edit', 'write', 'implement', 'fix', 'rename', 'create']
+const STRONG_PATTERN = new RegExp('\\b(' + STRONG_WORDS.join('|') + ')\\b', 'g')
+const ACTION_PATTERN = new RegExp('\\b(' + ACTION_WORDS.join('|') + ')\\b', 'g')
+
+export function predictComplexityTier(text: string): ComplexityTier {
+  const chars = text.length
+  const strong = (text.match(STRONG_PATTERN) ?? []).length
+  const action = (text.match(ACTION_PATTERN) ?? []).length
+  const score = (chars < 80 ? -1 : chars > 320 ? 1 : 0) + Math.min(2, strong) + Math.min(1, action)
+  return score <= 1 ? 'trivial' : score <= 3 ? 'standard' : 'deep'
 }
 
 /**
@@ -103,11 +136,14 @@ export const name = 'protocol-trace'
 export interface Config {
   /** Master switch; when false nothing is registered or appended. Default true once composed. */
   enabled?: boolean
+  /** Emit one passive complexity note per session's first user message. Default true. */
+  complexityNote?: boolean
 }
 
 /** Schemastery config for the observable trace. */
 export const Config: z<Config> = z.object({
   enabled: z.boolean().default(true),
+  complexityNote: z.boolean().default(true),
 })
 
 /**
@@ -144,11 +180,38 @@ export function onSessionEvent(session: Session, event: SessionEvent, state: Pro
   session.append('session/protocol-trace', buildTrace(state.route, event.data.message, event.data.usage, Date.now()))
 }
 
+/**
+ * Append a complexity note for the first user message of a session (seen set).
+ * @param session - owning session.
+ * @param event - one durable session event.
+ * @param seen - per-session flag set (emits at most once per session).
+ */
+export function noteFirstUserComplexity(session: Session, event: SessionEvent, seen: WeakSet<object>): void {
+  if (event.type !== 'user/message' || seen.has(session)) return
+  seen.add(session)
+  const content = event.data.content
+  const text = content
+    .filter((block): block is Extract<(typeof content)[number], { type: 'text' }> => block.type === 'text')
+    .map(block => block.text)
+    .join(' ')
+  session.append('session/complexity-note', {
+    tier: predictComplexityTier(text),
+    signals: {
+      chars: text.length,
+      strong: (text.match(STRONG_PATTERN) ?? []).length,
+      action: (text.match(ACTION_PATTERN) ?? []).length,
+    },
+    ts: Date.now(),
+  })
+}
+
 export function apply(ctx: Context, config: Config): void {
   const enabled = config.enabled ?? true
   if (!enabled) return
   const state: ProtocolTraceState = {}
+  const seen = new WeakSet<object>()
   ctx.on('session/event', (session, event) => {
     onSessionEvent(session, event, state)
+    if (config.complexityNote ?? true) noteFirstUserComplexity(session, event, seen)
   }, { global: true })
 }

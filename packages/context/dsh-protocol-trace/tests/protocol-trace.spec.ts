@@ -10,7 +10,7 @@ import Include from '@deepseek-ai/cordis-plugin-include'
 import type { AssistantMessage } from '@deepseek-ai/dsh-llm'
 import SessionStore, { SessionId } from '@deepseek-ai/dsh-session'
 import type { SessionEvent } from '@deepseek-ai/dsh-session'
-import { buildTrace, onSessionEvent } from '../src/index.ts'
+import { buildTrace, noteFirstUserComplexity, onSessionEvent, predictComplexityTier } from '../src/index.ts'
 import * as ProtocolTrace from '../src/index.ts'
 
 let root: string | undefined
@@ -139,5 +139,25 @@ describe('protocol-trace under a real Loader composition', () => {
       turn: 1, step: 1, message: { content: [{ type: 'text', text: 'x' }] } as unknown as AssistantMessage,
     }, { surfaceOp: 'append' })
     expect(session.events.some(e => e.type === 'session/protocol-trace')).toBe(false)
+  })
+})
+
+describe('predictComplexityTier + noteFirstUserComplexity', () => {
+  it('classifies by message size and keywords', () => {
+    expect(predictComplexityTier('ok')).toBe('trivial')
+    expect(predictComplexityTier('Implement the requested numeric parser with correct precedence and then run its test suite')).toBe('standard')
+    expect(predictComplexityTier('debug the concurrency race deadlock in the parser, then compile the build and run the full regression refactor; also fix the threading model, migrate the architecture, reproduce the deadlock, and build a stress regression to confirm the fix holds under load; then recompile the build and run the whole suite again to make sure the race window closes and no regression appears in the parser, the thread pool, or the build pipeline; finally document the deadlock and the build regression for the migration to the new architecture and the concurrency freeze')).toBe('deep')
+  })
+  it('notes the first user message complexity once per session', async () => {
+    const ctx = await boot([])
+    const session = ctx.sessions.create(SessionId('pt-note'))
+    const seen = new WeakSet<object>()
+    const userEvent = { type: 'user/message', data: { content: [{ type: 'text', text: 'debug the parse bug and run it' }] } } as unknown as SessionEvent
+    noteFirstUserComplexity(session, userEvent, seen)
+    noteFirstUserComplexity(session, userEvent, seen)
+    const notes = session.events.filter(e => e.type === 'session/complexity-note')
+    expect(notes).toHaveLength(1)
+    const payload = (notes[0] as unknown as { data: { tier: string } }).data
+    expect(payload.tier).toBe('standard')
   })
 })

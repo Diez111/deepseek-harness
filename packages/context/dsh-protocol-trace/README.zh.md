@@ -12,7 +12,8 @@
     - id: protocol-trace
       name: '@deepseek-ai/dsh-protocol-trace'
       config:
-        enabled: true   # false restores baseline exactly
+        enabled: true      # false restores baseline exactly
+        complexityNote: true # one passive complexity estimate per session first message (0 tokens)
 ```
 
 ## 模型体验
@@ -34,3 +35,4 @@
 - **仅覆盖 harness 层**：track 记录的是 harness 自身组装的事实（路由、usage、reasoning 存在性）。网关静默丢弃的字段（top_logprobs 分布、cache tokens）在此不可观测；由一次性 wire audit 捕获（scripts/benchmarks/dsh-evo/BASELINE.md）。
 - **监听 wiring 是标准 `ctx.on('session/event', ..., { global: true })`**：逻辑经导出的 `onSessionEvent` 单测；thin wiring 与会话投影注册表同模式。
 - **尚无按评估聚合**：只发射原始事实；聚合与 router 校准推迟到 router 阶段。
+- **复杂度音符为“先测量”**：`session/complexity-note` 用第一条用户消息的廉价启发式预测档位（`trivial`/`standard`/`deep`）；它绝不改变 effort 或预算，也不是已校准的 router（`complexityNote: false` 还原 baseline）。
