@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
+import { CallId, createUserMessage } from '@deepseek-ai/dsh-llm'
 import type { Message } from '@deepseek-ai/dsh-llm'
 import type { SessionEvent } from '@deepseek-ai/dsh-session'
 import { SessionId } from '@deepseek-ai/dsh-session'
@@ -207,7 +207,7 @@ describe('durable state as model-visible context', () => {
     const agent = ctx.agentLoop.create(SessionId('rn1'), { provider: 'mock', model: 'mock' })
     const write = await ctx.tools.execute({
       signal: new AbortController().signal,
-      callId: 'w1',
+      callId: CallId('w1'),
       name: 'jspace_state',
       arguments: { goal: 'keep going', open: ['finish X'] },
       agent,

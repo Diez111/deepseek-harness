@@ -227,7 +227,7 @@ function report(arms: Metrics[]): string {
 async function main(): Promise<void> {
   const baseline = await withArm(false)
   const experiment = await withArm(true)
-  const arms = [baseline.metrics, experiment.metrics]
+  const arms: [Metrics, Metrics] = [baseline.metrics, experiment.metrics]
   const table = report(arms)
   const reportPath = join(import.meta.dirname, 'report.json')
   await mkdir(import.meta.dirname, { recursive: true })

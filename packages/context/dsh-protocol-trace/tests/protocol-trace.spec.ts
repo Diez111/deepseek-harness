@@ -10,7 +10,7 @@ import Include from '@deepseek-ai/cordis-plugin-include'
 import type { AssistantMessage } from '@deepseek-ai/dsh-llm'
 import SessionStore, { SessionId } from '@deepseek-ai/dsh-session'
 import type { SessionEvent } from '@deepseek-ai/dsh-session'
-import { buildTrace, noteFirstUserComplexity, onSessionEvent, predictComplexityTier } from '../src/index.ts'
+import { buildTrace, noteFirstUserComplexity, onSessionEvent, predictComplexityTier, ProtocolTraceState } from '../src/index.ts'
 import * as ProtocolTrace from '../src/index.ts'
 
 let root: string | undefined
@@ -102,7 +102,7 @@ describe('onSessionEvent (direct observer)', () => {
   it('caches the route from the header and appends one trace per assistant message', async () => {
     const ctx = await boot([])
     const session = ctx.sessions.create(SessionId('pt-live'))
-    const state: { route?: unknown } = {}
+    const state: ProtocolTraceState = {}
     onSessionEvent(session, headerEvent, state)
     expect(state.route).toMatchObject({ provider: 'opencode-go', model: 'deepseek-v4-flash', maxTokens: 2048 })
     onSessionEvent(session, assistantEvent([
@@ -114,12 +114,12 @@ describe('onSessionEvent (direct observer)', () => {
       .map(e => (e as unknown as { data: Record<string, unknown> }).data)
     expect(traces).toHaveLength(1)
     expect(traces[0]).toMatchObject({ provider: 'opencode-go', model: 'deepseek-v4-flash', reasoningPresent: true, toolCalls: 1, inputTokens: 25, outputTokens: 7 })
-    expect(traces[0].cacheReadTokens).toBeUndefined()
+    expect(traces[0]!.cacheReadTokens).toBeUndefined()
   })
   it('ignores non-matching events and does not trace the assistant message twice', async () => {
     const ctx = await boot([])
     const session = ctx.sessions.create(SessionId('pt-cold'))
-    const state: { route?: unknown } = {}
+    const state: ProtocolTraceState = {}
     const stepEvent = { type: 'step/end', data: { turn: 1, step: 1 } } as unknown as SessionEvent
     onSessionEvent(session, stepEvent, state)
     expect(session.events.some(e => e.type === 'session/protocol-trace')).toBe(false)
