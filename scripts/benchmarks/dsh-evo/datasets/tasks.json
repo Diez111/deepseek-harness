@@ -1,0 +1,68 @@
+[
+  {
+    "id": "t01-reverse",
+    "origin": "mutation",
+    "type": "bug-focal",
+    "difficulty": "trivial",
+    "problem": "Implement `reverse(s)` in src/solution.py: returns the string s reversed (characters reversed; empty stays empty; unicode safe). Add no other public functions. Do not modify any other file.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef reverse(s):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import sys\nspec=importlib.util.spec_from_file_location('sol','src/solution.py')\nsol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('',''),('a','a'),('ab','ba'),('hello','olleh'),('ñandú','údnañ'),('a'*100000, 'a'*100000)]:\n    assert sol.reverse(a)==b\nprint('PASS')\n"
+  },
+  {
+    "id": "t02-fizzbuzz",
+    "origin": "mutation",
+    "type": "bug-focal",
+    "difficulty": "trivial",
+    "problem": "Implement `fizzbuzz(n)` in src/solution.py: returns a list of strings for numbers 1..n: multiples of 3 -> 'Fizz', of 5 -> 'Buzz', of both -> 'FizzBuzz', else the number as string. n>=1.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef fizzbuzz(n):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nassert sol.fizzbuzz(1)==['1']\nassert sol.fizzbuzz(15)[2]=='Fizz' and sol.fizzbuzz(15)[4]=='Buzz' and sol.fizzbuzz(15)[14]=='FizzBuzz'\nassert sol.fizzbuzz(3)==['1','2','Fizz']\nprint('PASS')\n"
+  },
+  {
+    "id": "t03-longest-run",
+    "origin": "mutation",
+    "type": "edge-cases",
+    "difficulty": "standard",
+    "problem": "Implement `longest_run(s)` in src/solution.py: returns the length of the longest maximal run of a single repeated character; empty -> 0; only consecutive identical chars count, case-sensitive.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef longest_run(s):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('',0),('a',1),('aaabbb',3),('abcaabbcc',2),('zzzz',4),('aabbaaa',3),('Aaa',2)]:\n    assert sol.longest_run(a)==b, (a,sol.longest_run(a),b)\nprint('PASS')\n"
+  },
+  {
+    "id": "t04-lru",
+    "origin": "mutation",
+    "type": "stateful",
+    "difficulty": "standard",
+    "problem": "Implement an LRU cache in src/solution.py: class `LRUCache(capacity)` with `get(key)` (value or -1) and `put(key,value)`. Evict least-recently-used on overflow; get counts as a use.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\nclass LRUCache:\n    def __init__(self, capacity):\n        raise NotImplementedError\n    def get(self, key):\n        raise NotImplementedError\n    def put(self, key, value):\n        raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nc=sol.LRUCache(2); c.put(1,1); c.put(2,2); assert c.get(1)==1; c.put(3,3); assert c.get(2)==-1; c.put(4,4); assert c.get(1)==-1; assert c.get(3)==3; assert c.get(4)==4\nc2=sol.LRUCache(1); c2.put('a',1); c2.put('b',2); assert c2.get('a')==-1 and c2.get('b')==2\nprint('PASS')\n"
+  },
+  {
+    "id": "t05-eval",
+    "origin": "mutation",
+    "type": "algorithm",
+    "difficulty": "deep",
+    "problem": "Implement `evaluate(expr)` in src/solution.py: evaluates an arithmetic expression string with + - * and parentheses, integers, precedence (* binds tighter), no spaces, no unary ops. Examples: '3+5*2'->13, '(2+3)*4'->20, '10-4*2'->2.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\ndef evaluate(expr):\n    # TODO\n    raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nfor a,b in [('3+5*2',13),('(2+3)*4',20),('10-4*2',2),('7',7),('1+2*3-4',3),('(1+2)*(3+4)',21),('2*3+4*5',26),('((2+3))',5)]:\n    assert sol.evaluate(a)==b, (a,sol.evaluate(a),b)\nprint('PASS')\n"
+  },
+  {
+    "id": "t06-vending",
+    "origin": "mutation",
+    "type": "stateful",
+    "difficulty": "deep",
+    "problem": "Implement a vending machine in src/solution.py: class `Machine(price)`. `insert(coins)` adds positive ints, returns running total; `buy()` purchases one item if inserted>=price (subtract price, return items purchased so far) else -1; `refund()` returns remaining balance and resets it to 0. Unlimited items.",
+    "files": {
+      "src/solution.py": "#!/usr/bin/env python3\n# Implement the functions required by problem.md in this file.\nclass Machine:\n    def __init__(self, price):\n        raise NotImplementedError\n    def insert(self, coins):\n        raise NotImplementedError\n    def buy(self):\n        raise NotImplementedError\n    def refund(self):\n        raise NotImplementedError\n"
+    },
+    "oracle": "import importlib.util\nspec=importlib.util.spec_from_file_location('sol','src/solution.py'); sol=importlib.util.module_from_spec(spec); spec.loader.exec_module(sol)\nm=sol.Machine(5)\nassert m.insert(2)==2 and m.buy()==-1 and m.insert(3)==5\nassert m.buy()==1 and m.buy()==-1\nm2=sol.Machine(10); m2.insert(10); m2.insert(0); assert m2.buy()==1 and m2.refund()==0\nm3=sol.Machine(4); m3.insert(8); assert m3.buy()==1 and m3.refund()==4\nprint('PASS')\n"
+  }
+]

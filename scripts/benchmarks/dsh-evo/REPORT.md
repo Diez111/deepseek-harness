@@ -1,6 +1,10 @@
-# DSH-EVO — Informe final (respuesta a §27/§28 del mandato)
+# DSH-EVO — Informe del estado (respuesta a §27/§28 del mandato)
 
 _Fecha 2026-08-18 · objetivo: maximizar rendimiento verificable de DeepSeek V4 Flash `deepseek-v4-flash` (alias 2026-08-18, sin fingerprint 0731) con reasoning_effort=max. Reglas del mandato cumplidas: manifesto previo por cambio, validación contra baseline de presupuesto igual, sin 'supera' sin sealed test._
+
+## Estado de fases (guía del Stage 2+)
+- **Stage 1 completada** — instrumentación y guardrails: protocol-trace, complejidad (shadow), verifier inicial calibrado, completion gate. NO es un programa cerrado.
+- **Stage 2 (benchmark+calibración) en curso** — ver MANIFEST-002.md, datasets/, runners/, results/. Toda afirmación de mejora de capacidad espera el benchmark sellado (Stage 7).
 
 ## A. Auditoría del sistema (resumen)
 - **Flujo**: OpenCode Go (gateway openai-compatible) -> DeepSeek Harness (un único agent loop): no hay doble orquestación que interfiera — el loop, prompts, tools y persistencia son de DSH.

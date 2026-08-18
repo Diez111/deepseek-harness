@@ -1,0 +1,4 @@
+RUN t01-reverse
+{"id":"t01-reverse","difficulty":"trivial","type":"bug-focal","origin":"mutation","status":"fail","wallMs":10301,"oracleOut":"","oracleErr":"call last):\n  File \"/tmp/dshevo-task-sK8SMO/oracle.py\", line 2, in <module>\n    spec=importlib.util.spec_from_file_location('sol','src/solution.py')\n         ^^^^^^^^^\nNameError: name 'importlib' is not defined. Did you forget to import 'importlib'?\n","agentTail":"Implemented `reverse(s)` in `src/solution.py`:\n\n```python\ndef reverse(s):\n    return s[::-1]\n```\n\nVerified behavior:\n- `reverse(\"hello\")` → `\"olleh\"`\n- `reverse(\"\")` → `\"\"` (empty stays empty)\n- `reverse(\"héllo→\")` → `\"→olléh\"` (unicode handled correctly)\n- `reverse(\"日本語\")` → `\"語本日\"`\n\nNo other public functions were added, and no other files were modified. Slicing with `[::-1]` reverses by Unicode code points (as opposed to raw bytes), so it's unicode-safe.\n"}
+
+RUN t05-eval
