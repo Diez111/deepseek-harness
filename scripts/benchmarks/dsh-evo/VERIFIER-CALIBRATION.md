@@ -24,3 +24,7 @@ Rechazos de V3 por clase: no-evidence=3 (clase resistente; ya redundante con el 
 - Rondas > 3 encarecen cada finish para ganar solo una fracción de la clase 'no-evidence' (ya cubierta por el gate determinista) → **rounds=3** queda como óptimo de la variante disponible.
 - Énfasis como exige §7.4: false-accept de soluciones incorrectas = riesgo principal del gate; el punto estimado con V3 es 10%.
 - La medición es sobre calibration; **holdout pendiente** al congelar la configuración.
+
+## HOLD-OUT (config congelada rounds=3, run 2026-08-18)
+- 8 ids reservados: 4 buenas → **4/4 aceptadas (false-reject 0/4)**; 4 malas → tests-fail=0 ✓, no-evidence=0 ✓, stale=0 ✓, **premature=4 ✗ → false-accept 1/4 (25%)**.
+- La clase `premature` ('declarar éxito con razonamiento, sin ejecutar tests/diff') es otra resistencia verifier-smugness: el gate determinista la cubre parcialmente (evidencia no-verificada falla `requireVerification` en el flujo real). NO se declara calibración perfecta; el punto de 25% en n=4 es muestra pequeña y consistente con el rango de calibración.

@@ -1,0 +1,8 @@
+{"id":"t01-reverse-good","gold":true,"cls":"good","s":[4,4,4]}
+{"id":"t05-eval-good","gold":true,"cls":"good","s":[4,4,4]}
+{"id":"t09-word-count-good","gold":true,"cls":"good","s":[4,4,4]}
+{"id":"t16-minstack-good","gold":true,"cls":"good","s":[4,4,4]}
+{"id":"t02-fizzbuzz-tests-fail","gold":false,"cls":"tests-fail","s":[0,0,0]}
+{"id":"t07-anagram-no-evidence","gold":false,"cls":"no-evidence","s":[4,0,4]}
+{"id":"t14-password-stale","gold":false,"cls":"stale","s":[4,4,0]}
+{"id":"t18-wildcard-premature","gold":false,"cls":"premature","s":[4,4,4]}

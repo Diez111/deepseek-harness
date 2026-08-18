@@ -31,3 +31,9 @@ _Fecha 2026-08-18 · objetivo: maximizar rendimiento verificable de DeepSeek V4 
 - **¿Qué no pudo demostrarse?** routing adaptativo que cambie presupuesto (política always-max), TTC Best-of-N, autoevolución y cualquier 'supera': requieren dataset sellado + presupuesto igual que aquí no existen.
 - **¿Se acerca o supera al sistema de referencia?** No se inventa comparación (sin acceso a Claude Code + Fable); se entrega baseline reproducible para comparar cuando exista.
 - **Veredicto sobre DSH-EVO**: **conservar** las mejoras demostradas (E1/E2/E3 + gate + calibración), **revertibles** por flag; **no** mantener claims no demostrados.
+
+## Consolidación Stage 2–7 (honestidad §22)
+- **demostrado**: benchmark reproducible (30 tareas, splits seed, runner+oráculos), B0 dev 15/15, calibración verifier (rounds=3 por datos; holdout false-reject 0/4, false-accept 1/4 con clase `premature` resistente), infraestructura completa.
+- **probable/inconcluso**: Evidence Vault (sin efecto en dev → NO promovido); TTC Best-of-3 y router (sin ganancia/degeneran en dev → NO habilitados).
+- **no ejecutable aquí (documentado)**: sealed eval (requiere presupuesto + dataset sellado más duro; procedimiento en SEALED-EVAL.md), medición fiel de tokens/corrida, autoevolución.
+- **Reglas respetadas**: manifest previo, presupuesto igual, sin 'supera' sin sealed, flags-off = baseline, nomenclatura Stage-1-completada.
