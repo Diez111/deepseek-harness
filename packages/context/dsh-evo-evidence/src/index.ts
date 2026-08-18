@@ -70,7 +70,9 @@ function truncateUtf8Bytes(text: string, maxBytes: number): string {
   if (buf.length <= maxBytes) return text
   let end = maxBytes
   // Step back while the byte at `end` is a UTF-8 continuation byte (0b10xxxxxx).
-  while (end > 0 && (buf[end] & 0xc0) === 0x80) end -= 1
+  // `?? 0` is safe: the loop only runs while `end > 0` and the buffer is longer
+  // than `maxBytes`, so at most the final byte may be absent under strict indexing.
+  while (end > 0 && ((buf[end] ?? 0) & 0xc0) === 0x80) end -= 1
   return buf.subarray(0, end).toString('utf8')
 }
 
