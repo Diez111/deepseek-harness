@@ -1,0 +1,30 @@
+{
+  "seed": 20260818,
+  "split": {
+    "dev": [
+      "t04-lru",
+      "t10-is-palindrome",
+      "t05-eval",
+      "t07-anagram",
+      "t15-rotate-matrix",
+      "t12-find-missing",
+      "t14-password",
+      "t02-fizzbuzz",
+      "t01-reverse"
+    ],
+    "val": [
+      "t16-minstack",
+      "t03-longest-run",
+      "t08-nth-fib",
+      "t13-merge-sorted",
+      "t06-vending"
+    ],
+    "sealed": [
+      "t18-wildcard",
+      "t09-word-count",
+      "t11-remove-dupes",
+      "t17-intervals"
+    ]
+  },
+  "note": "sealed no se usa hasta congelar arquitectura"
+}
